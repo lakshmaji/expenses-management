@@ -1,7 +1,7 @@
 const fs = require("fs")
 
 const { main } = require('./geektrust');
-const { commandParser } = require('./src/command_parser');
+const { commandParser } = require('./src/command-parser');
 const { createResidence } = require('./src/residence');
 const { INITIAL_BALANCE, FILENAME_POSITION, MAXIMUM_OCCUPANCY } = require('./src/constants');
 
@@ -117,7 +117,7 @@ describe("House Dues Management", () => {
             })
 
             afterEach(() => {
-                house.reset()
+                
             })
 
             it('should have no residents', () => {
@@ -147,7 +147,7 @@ describe("House Dues Management", () => {
             })
 
             afterEach(() => {
-                house.reset()
+                
             })
 
             it('should return false when house is empty', () => {
@@ -172,7 +172,7 @@ describe("House Dues Management", () => {
             })
 
             afterEach(() => {
-                house.reset()
+                
             })
 
             it('should empty array when house is empty', () => {
@@ -197,7 +197,7 @@ describe("House Dues Management", () => {
             })
 
             afterEach(() => {
-                house.reset()
+                
             })
 
             it('should return empty balances when house is empty', () => {
@@ -272,7 +272,7 @@ describe("House Dues Management", () => {
             })
 
             afterEach(() => {
-                house.reset()
+                
             })
 
             it('should return empty transactions when house is empty', () => {
@@ -354,7 +354,7 @@ describe("House Dues Management", () => {
         })
 
         afterEach(() => {
-            house.reset()
+            
         })
 
         it('should welcome a new member to house when house is empty', () => {
@@ -382,7 +382,7 @@ describe("House Dues Management", () => {
         })
 
         afterEach(() => {
-            house.reset()
+            
         })
 
         it('should spend when added spent amount on all housemates', () => {
@@ -417,7 +417,7 @@ describe("House Dues Management", () => {
         })
 
         afterEach(() => {
-            house.reset()
+            
         })
 
         it('should not print any dues when house is empty', () => {
@@ -458,7 +458,7 @@ describe("House Dues Management", () => {
 
         describe('house with default housemates', () => {
             beforeEach(() => {
-                house.reset()
+                
                 house.addMember(TESTING_CONSTANTS.FAKE_NAMES.SNOWBALL)
                 house.addMember(TESTING_CONSTANTS.FAKE_NAMES.GRU)
                 house.addMember(TESTING_CONSTANTS.FAKE_NAMES.SUPER_RHINO)
@@ -532,7 +532,7 @@ describe("House Dues Management", () => {
         })
 
         afterEach(() => {
-            house.reset()
+            
         })
 
         it('should not pay amount when there is spend at all in house', () => {
@@ -594,7 +594,7 @@ describe("House Dues Management", () => {
         })
 
         afterEach(() => {
-            house.reset()
+            
         })
 
         it('should move out a member they do not have any spending by any members in the house', () => {

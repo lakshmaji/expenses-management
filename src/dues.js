@@ -1,14 +1,16 @@
 const { INITIAL_BALANCE } = require("./constants");
 const { HOUSEMATE_MESSAGES } = require("./messages");
+const Store = require("./store");
 const { settleDebts } = require("./transactions");
 
-const dues = (store, housemate) => {
+const dues = (housemate) => {
+    const store = new Store()
     const housemates = new Set(store.housemates().map(housemate => housemate.toLowerCase()));
     if (!housemates.has(housemate.toLowerCase())) {
         return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
     }
 
-    const transactions = settleDebts(store);
+    const transactions = settleDebts();
 
     const housemate_dues = transactions.filter(t => t.to === housemate)
 

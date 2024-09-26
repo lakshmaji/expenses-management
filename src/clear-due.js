@@ -1,8 +1,10 @@
 const { INITIAL_BALANCE } = require("./constants");
 const { CLEAR_DUE_MESSAGES, HOUSEMATE_MESSAGES } = require("./messages");
+const Store = require("./store");
 const { settleDebts } = require("./transactions");
 
-const clearDue = (store, borrower, lender, amount) => {
+const clearDue = (borrower, lender, amount) => {
+    const store = new Store()
     amount = parseInt(amount)
     const housemates = new Set(store.housemates().map(housemate => housemate.toLowerCase()));
     if (!housemates.has(borrower.toLowerCase())) {
@@ -21,7 +23,7 @@ const clearDue = (store, borrower, lender, amount) => {
     }
     store.update(borrower, payerBalance - amount);
     store.update(lender, payeeBalance + amount);
-    const due_amount = settleDebts(store).filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, INITIAL_BALANCE)
+    const due_amount = settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, INITIAL_BALANCE)
     return due_amount
 }
 

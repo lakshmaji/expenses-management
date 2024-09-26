@@ -1,7 +1,9 @@
 const { HOUSEMATE_MESSAGES, SPEND_MESSAGES } = require("./messages");
+const Store = require("./store");
 
 
-const spend = (store, amount, spent_by, ...on_members) => {
+const spend = (amount, spent_by, ...on_members) => {
+    const store = new Store()
     // How about a case when there are on_members
     if (store.can_spend()) {
         return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;

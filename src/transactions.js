@@ -1,6 +1,8 @@
 const { INITIAL_BALANCE } = require("./constants");
+const Store = require("./store");
 
-const settleDebts = (store) => {
+const settleDebts = () => {
+    const store  = new Store()
     const transactions = [];
 
     const creditors = [];
