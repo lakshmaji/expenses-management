@@ -1,7 +1,10 @@
 const { createResidence } = require("./residence");
+const Store = require('./store');
 
 function commandParser(inputLines) {
-    const home = createResidence();
+    const store = new Store()
+
+    const home = createResidence(store);
 
     inputLines.forEach((line) => {
         const [command, ...args] = line.replace(/\r+$/, "").split(" ");

@@ -7,6 +7,7 @@ const { INITIAL_BALANCE, FILENAME_POSITION, MAXIMUM_OCCUPANCY } = require('./src
 
 const TEST_CASES = require('./test_data/test_data.json');
 const TEST_NUMBERS_DATA = require('./test_data/nums.json');
+const Store = require("./src/store");
 
 // Ugly hack: Ideally this shouldn't be here but the geektrust AI model is complaining that too many magic numbers are there. 
 const TESTING_CONSTANTS = {
@@ -69,6 +70,14 @@ expect.extend({
 
 
 describe("House Dues Management", () => {
+    let store;
+    beforeEach(() => {        
+        store = new Store()
+    })
+
+    afterEach(() => {
+        Store.reset()
+    })
 
 
     function getRandomValue(arr) {
@@ -104,7 +113,7 @@ describe("House Dues Management", () => {
         describe('occupants_count', () => {
             let house;
             beforeEach(() => {
-                house = createResidence();
+                house = createResidence(store);
             })
 
             afterEach(() => {
@@ -134,7 +143,7 @@ describe("House Dues Management", () => {
         describe('house_full', () => {
             let house;
             beforeEach(() => {
-                house = createResidence();
+                house = createResidence(store);
             })
 
             afterEach(() => {
@@ -159,7 +168,7 @@ describe("House Dues Management", () => {
         describe('housemates', () => {
             let house;
             beforeEach(() => {
-                house = createResidence();
+                house = createResidence(store);
             })
 
             afterEach(() => {
@@ -184,7 +193,7 @@ describe("House Dues Management", () => {
         describe('getBalances', () => {
             let house;
             beforeEach(() => {
-                house = createResidence();
+                house = createResidence(store);
             })
 
             afterEach(() => {
@@ -259,7 +268,7 @@ describe("House Dues Management", () => {
         describe('settleDebts', () => {
             let house;
             beforeEach(() => {
-                house = createResidence();
+                house = createResidence(store);
             })
 
             afterEach(() => {
@@ -341,7 +350,7 @@ describe("House Dues Management", () => {
     describe('MOVE_IN', () => {
         let house;
         beforeEach(() => {
-            house = createResidence();
+            house = createResidence(store);
         })
 
         afterEach(() => {
@@ -369,7 +378,7 @@ describe("House Dues Management", () => {
     describe('SPEND', () => {
         let house;
         beforeEach(() => {
-            house = createResidence();
+            house = createResidence(store);
         })
 
         afterEach(() => {
@@ -404,7 +413,7 @@ describe("House Dues Management", () => {
     describe('DUES', () => {
         let house;
         beforeEach(() => {
-            house = createResidence();
+            house = createResidence(store);
         })
 
         afterEach(() => {
@@ -519,7 +528,7 @@ describe("House Dues Management", () => {
     describe('CLEAR_DUE', () => {
         let house;
         beforeEach(() => {
-            house = createResidence();
+            house = createResidence(store);
         })
 
         afterEach(() => {
@@ -581,7 +590,7 @@ describe("House Dues Management", () => {
     describe('MOVE_OUT', () => {
         let house;
         beforeEach(() => {
-            house = createResidence();
+            house = createResidence(store);
         })
 
         afterEach(() => {

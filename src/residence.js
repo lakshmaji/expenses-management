@@ -1,6 +1,8 @@
 const { MAXIMUM_OCCUPANCY, INITIAL_BALANCE, MINIMUM_MEMBERS_REQUIRED } = require('./constants');
+const Store = require('./store');
 
-const createResidence = () => {
+
+const createResidence = (store) => {
 
     const HOUSEMATE_MESSAGES = {
         SUCCESS: 'SUCCESS',
@@ -12,13 +14,11 @@ const createResidence = () => {
         INVALID_PAYMENT: 'INCORRECT_PAYMENT'
     }
 
-    const balances = new Map();
-
     const addMember = (name) => {
-        if (balances.size >= MAXIMUM_OCCUPANCY) {
+        if (store.can_add()) {
             return HOUSEMATE_MESSAGES.HOUSEFUL;
         }
-        balances.set(name, INITIAL_BALANCE);
+        store.init(name)
         return HOUSEMATE_MESSAGES.SUCCESS;
     };
 
@@ -28,11 +28,11 @@ const createResidence = () => {
 
     const spend = (amount, spent_by, ...on_members) => {
         // How about a case when there are on_members
-        if (balances.size < MINIMUM_MEMBERS_REQUIRED) {
+        if (store.can_spend()) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
 
-        const housemates = new Set(Array.from(balances.keys()).map(housemate => housemate.toLowerCase()));
+        const housemates = new Set(store.housemates().map(housemate => housemate.toLowerCase()));
         if (!housemates.has(spent_by.toLowerCase())) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
 
@@ -52,8 +52,8 @@ const createResidence = () => {
         const individual_share = amount / total_members;
 
         for (const member of on_members) {
-            balances.set(spent_by, balances.get(spent_by) - individual_share);
-            balances.set(member, balances.get(member) + individual_share);
+            store.update(spent_by, store.get(spent_by) - individual_share);
+            store.update(member, store.get(member) + individual_share);
         }
         return SPEND_MESSAGES.SUCCESS;
     };
@@ -64,7 +64,7 @@ const createResidence = () => {
         const creditors = [];
         const debtors = [];
 
-        for (const [member, balance] of balances) {
+        for (const [member, balance] of store.get_balances()) {
             if (balance > INITIAL_BALANCE) {
                 creditors.push({ member, amount: balance });
             } else if (balance < INITIAL_BALANCE) {
@@ -111,7 +111,7 @@ const createResidence = () => {
         return difference;
     }
     const dues = (housemate) => {
-        const housemates = new Set(Array.from(balances.keys()).map(housemate => housemate.toLowerCase()));
+        const housemates = new Set(store.housemates().map(housemate => housemate.toLowerCase()));
         if (!housemates.has(housemate.toLowerCase())) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
@@ -121,7 +121,7 @@ const createResidence = () => {
         const housemate_dues = transactions.filter(t => t.to === housemate)
 
         const current_housemates = new Set(housemate_dues.map(h => h.from).concat(housemate))
-        const all_housemates = new Set(Array.from(balances.keys()))
+        const all_housemates = new Set(store.housemates())
 
         const diff = excluded_housemates(all_housemates, current_housemates)
         result = housemate_dues.concat(Array.from(diff, (e) => ({ from: e, amount: INITIAL_BALANCE })))
@@ -140,7 +140,7 @@ const createResidence = () => {
 
     const clearDue = (borrower, lender, amount) => {
         amount = parseInt(amount)
-        const housemates = new Set(Array.from(balances.keys()).map(housemate => housemate.toLowerCase()));
+        const housemates = new Set(store.housemates().map(housemate => housemate.toLowerCase()));
         if (!housemates.has(borrower.toLowerCase())) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
 
@@ -149,14 +149,14 @@ const createResidence = () => {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
 
-        const payerBalance = balances.get(borrower);
-        const payeeBalance = balances.get(lender);
+        const payerBalance = store.get(borrower);
+        const payeeBalance = store.get(lender);
 
         if (payerBalance < amount) {
             return CLEAR_DUE_MESSAGES.INVALID_PAYMENT;
         }
-        balances.set(borrower, payerBalance - amount);
-        balances.set(lender, payeeBalance + amount);
+        store.update(borrower, payerBalance - amount);
+        store.update(lender, payeeBalance + amount);
         const due_amount = settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, INITIAL_BALANCE)
         return due_amount
     }
@@ -167,7 +167,7 @@ const createResidence = () => {
     }
 
     const canMoveOut = (member) => {
-        const memberBalance = balances.get(member);
+        const memberBalance = store.get(member);
 
         if (memberBalance > INITIAL_BALANCE) {
             // Member has dues to clear.
@@ -175,7 +175,7 @@ const createResidence = () => {
         }
 
         let others_totals = INITIAL_BALANCE;
-        for (const [otherMember, balance] of balances) {
+        for (const [otherMember, balance] of store.get_balances()) {
             if (otherMember !== member) {
                 others_totals += balance;
                 others_totals += balance;
@@ -190,14 +190,14 @@ const createResidence = () => {
 
 
     const moveOut = (member) => {
-        const housemates = new Set(Array.from(balances.keys()).map(housemate => housemate.toLowerCase()));
+        const housemates = new Set(store.housemates().map(housemate => housemate.toLowerCase()));
         if (!housemates.has(member.toLowerCase())) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
 
         const result = canMoveOut(member);
         if (result) {
-            balances.delete(member);
+            store.remove(member);
             return MOVE_OUT_MESSAGES.SUCCESS;
         } else {
             return MOVE_OUT_MESSAGES.FAILURE;
@@ -208,14 +208,14 @@ const createResidence = () => {
         addMember,
         spend,
         settleDebts,
-        getBalances: () => Object.fromEntries(balances),
+        getBalances: () => Object.fromEntries(store.get_balances()),
         dues,
         clearDue,
         moveOut,
-        housemates: () => Array.from(balances.keys()),
-        house_full: () => MAXIMUM_OCCUPANCY <= balances.size,
-        occupants_count: () => balances.size,
-        reset: () => balances.clear(),
+        housemates: () => store.housemates(),
+        house_full: () => store.is_full(),
+        occupants_count: () => store.housemate_count(),
+        reset: () => Store.reset(),
     };
 };
 
