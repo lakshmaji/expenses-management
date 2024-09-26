@@ -149,35 +149,16 @@ const createResidence = () => {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
 
-        // lender, amount
-        // const existing_borrower_dues = DUES.get(borrower) || {}
-        // if (existing_borrower_dues[lender] >= amount) {
-        //     const updated_data = { ...existing_borrower_dues, ...({ [lender]: (existing_borrower_dues[lender] || 0) - amount}) }
-        //     DUES.set(borrower ,updated_data)
-        // } else {
-        //     console.log(CLEAR_DUE_MESSAGES.INVALID_PAYMENT);
-        //     return
-        // }
-
-        // console.log(DUES.get(borrower)[lender])
-
         const payerBalance = balances.get(borrower);
         const payeeBalance = balances.get(lender);
-        // console.log(settleDebts(), borrower, lender)    
-
+        
         if (payerBalance < amount) {
             return CLEAR_DUE_MESSAGES.INVALID_PAYMENT;
         }
         balances.set(borrower, payerBalance - amount);
         balances.set(lender, payeeBalance + amount);
-        // return balances.get(borrower)
-        // const ae =  settleDebts().filter(e => e.from === borrower).reduce((acc, v) => acc +v.amount, 0)    
-        // const be =  settleDebts().filter(e => e.from === lender).reduce((acc, v) => acc +v.amount, 0)    
-        const ce = settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, 0)
-        // console.log(ce, borrower, lender)    
-        // // return be-ae
-        // return balances.get(borrower)
-        return ce
+        const due_amount = settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, 0)
+        return due_amount
     }
 
     const MOVE_OUT_MESSAGES = {

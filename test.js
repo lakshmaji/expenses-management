@@ -92,26 +92,17 @@ describe("House Dues Management", () => {
             it('should have 2 housemates', () => {
                 const house = createResidence();
                 addNHousemates(house, 2)
-                // house.addMember(FAKE_NAMES.SNOWBALL)
-                // house.addMember(FAKE_NAMES.SUPER_RHINO)
                 expect(house.occupants_count()).toBe(2)
             });
 
             it('should have 3 housemates', () => {
                 const house = createResidence();
-                // house.addMember(FAKE_NAMES.SNOWBALL)
-                // house.addMember(FAKE_NAMES.WALL_E)
-                // house.addMember(FAKE_NAMES.SUPER_RHINO)
                 addNHousemates(house, 3)
                 expect(house.occupants_count()).toBe(3)
             });
 
             it('should have 3 housemates', () => {
                 const house = createResidence();
-                // house.addMember(FAKE_NAMES.SNOWBALL)
-                // house.addMember(FAKE_NAMES.WALL_E)
-                // house.addMember(FAKE_NAMES.SUPER_RHINO)
-                // house.addMember(FAKE_NAMES.GRU)
                 addNHousemates(house, 4)
                 expect(house.occupants_count()).toBe(3)
             });
@@ -125,17 +116,12 @@ describe("House Dues Management", () => {
 
             it('should return false when there are few housemates', () => {
                 const house = createResidence();
-                // house.addMember(FAKE_NAMES.SNOWBALL)
-                // house.addMember(FAKE_NAMES.SUPER_RHINO)
                 addNHousemates(house, 2)
                 expect(house.house_full()).toBe(false)
             });
 
             it('should return true when house is full', () => {
                 const house = createResidence();
-                // house.addMember(FAKE_NAMES.SNOWBALL)
-                // house.addMember(FAKE_NAMES.WALL_E)
-                // house.addMember(FAKE_NAMES.SUPER_RHINO)
                 addNHousemates(house, 3)
                 expect(house.house_full()).toBe(true)
             });
@@ -149,8 +135,6 @@ describe("House Dues Management", () => {
 
             it('should return housemates list when there are few housemates', () => {
                 const house = createResidence();
-                // house.addMember(FAKE_NAMES.SNOWBALL)
-                // house.addMember(FAKE_NAMES.SUPER_RHINO)
                 const members = addNHousemates(house, 2)
                 expect(house.housemates()).toEqual(members)
             });
@@ -158,11 +142,6 @@ describe("House Dues Management", () => {
             it('should return housemates list house is full', () => {
                 const house = createResidence();
                 const members = addNHousemates(house, 3)
-
-                // house.addMember(FAKE_NAMES.SNOWBALL)
-                // house.addMember(FAKE_NAMES.WALL_E)
-                // house.addMember(FAKE_NAMES.SUPER_RHINO)
-                // expect(house.housemates()).toEqual([FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E, FAKE_NAMES.SUPER_RHINO])
                 expect(house.housemates()).toEqual(members)
             });
         })
@@ -231,17 +210,7 @@ describe("House Dues Management", () => {
                 house.spend(6000, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E)
                 house.spend(6000, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E)
                 const previous_balances = house.getBalances()
-                // expect(previous_balances).toEqual({
-                //     [FAKE_NAMES.SNOWBALL]: -1000,
-                //     [FAKE_NAMES.SUPER_RHINO]: -4000,
-                //     [FAKE_NAMES.WALL_E]: 5000,
-                // })
                 house.clearDue(FAKE_NAMES.WALL_E, FAKE_NAMES.SNOWBALL, 1000)
-                // expect(house.getBalances()).toEqual({
-                //     [FAKE_NAMES.SNOWBALL]: 0,
-                //     [FAKE_NAMES.SUPER_RHINO]: -4000,
-                //     [FAKE_NAMES.WALL_E]: 4000,
-                // })
                 expect(house.getBalances()).toHaveChanged(previous_balances, {
                     [FAKE_NAMES.SNOWBALL]: 0,
                     [FAKE_NAMES.WALL_E]: 4000,
