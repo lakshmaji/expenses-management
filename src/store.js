@@ -49,10 +49,6 @@ class Store {
         return Array.from(this.balances.keys())
     }
 
-    // reset() {
-    //     this.balances.clear()
-    // }
-
     static reset() {
         Store.instance = null;
     }

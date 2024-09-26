@@ -1,6 +1,7 @@
 const { INITIAL_BALANCE } = require("./constants");
 const { HOUSEMATE_MESSAGES, MOVE_OUT_MESSAGES } = require("./messages");
 const Store = require("./store");
+const { has_housemate } = require("./validations");
 
 const canMoveOut = (store, member) => {
     const memberBalance = store.get(member);
@@ -27,8 +28,7 @@ const canMoveOut = (store, member) => {
 
 const moveOut = (member) => {
     const store = new Store()
-    const housemates = new Set(store.housemates().map(housemate => housemate.toLowerCase()));
-    if (!housemates.has(member.toLowerCase())) {
+    if (!has_housemate(member)) {
         return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
     }
 

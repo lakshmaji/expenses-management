@@ -1,5 +1,6 @@
 const { HOUSEMATE_MESSAGES, SPEND_MESSAGES } = require("./messages");
 const Store = require("./store");
+const { has_housemate, valid_members } = require("./validations");
 
 
 const spend = (amount, spent_by, ...on_members) => {
@@ -9,20 +10,18 @@ const spend = (amount, spent_by, ...on_members) => {
         return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
     }
 
-    const housemates = new Set(store.housemates().map(housemate => housemate.toLowerCase()));
-    if (!housemates.has(spent_by.toLowerCase())) {
+    if (!has_housemate(spent_by)) {
         return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-
     }
 
-    const valid_members = on_members.every(member => housemates.has(member.toLowerCase()));
-
-    if (!valid_members) {
+    if (!valid_members(on_members)) {
         return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-
     }
 
+    return updateSpend(store, amount, spent_by, ...on_members)
+};
 
+function updateSpend(store, amount, spent_by, ...on_members) {
     let total_members = on_members.length;
     // Include spender
     total_members++
@@ -33,6 +32,6 @@ const spend = (amount, spent_by, ...on_members) => {
         store.update(member, store.get(member) + individual_share);
     }
     return SPEND_MESSAGES.SUCCESS;
-};
+}
 
 module.exports = { spend }

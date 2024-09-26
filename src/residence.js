@@ -7,14 +7,6 @@ const { settleDebts } = require('./transactions');
 
 
 const createResidence = (store) => {
-    // const _addMember = (name) => addMember(store, name)
-    // const _spend = (...input) => spend(store, ...input);
-    // const _dues = (housemate) => dues(store, housemate)
-    // const _clearDue = (borrower, lender, amount) => clearDue(store, borrower, lender, amount)
-    // const _moveOut = (member) => moveOut(store, member)
-
-    // const _settleDebts = () => settleDebts(store)
-
     return {
         addMember,
         clearDue,
@@ -22,12 +14,6 @@ const createResidence = (store) => {
         moveOut,
         spend,
         settleDebts,
-        // addMember: _addMember,
-        // spend: _spend,
-        // settleDebts: _settleDebts,
-        // dues: _dues,
-        // clearDue: _clearDue,
-        // moveOut: _moveOut,
         getBalances: () => Object.fromEntries(store.get_balances()),
         housemates: () => store.housemates(),
         house_full: () => store.is_full(),
