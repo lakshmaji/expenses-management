@@ -16,6 +16,12 @@ node geektrust.js sample_input/input1.txt
 ./run.sh # ubuntu
 ```
 
+## Testing
+
+```bash
+yarn test
+```
+
 ---
 ## Pre-requisites
 * NodeJS 12.6.0/14.15.4/16.10.0

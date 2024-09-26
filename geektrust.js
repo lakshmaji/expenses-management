@@ -28,6 +28,7 @@ const createResidence = () => {
     }
     
     const spend = (amount, spent_by, ...on_members) => {
+        // How about a case when there are on_members
         if (balances.size < 2) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
@@ -236,6 +237,9 @@ const ce =  settleDebts().filter(e => e.from === lender && e.to === borrower).re
         dues,
         clearDue,
         moveOut,
+        housemates: () => Array.from(balances.keys()),
+        house_full:()=> MAX_OCCUPANCY <= balances.size,
+        occupants_count: () => balances.size,
     };
 };
 

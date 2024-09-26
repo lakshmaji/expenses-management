@@ -5,11 +5,13 @@
   "main": "geektrust.js",
   "scripts": {
     "start": "node geektrust.js",
-    "test": "mocha"
+    "test": "jest"
   },
   "author": "lakshmaji",
   "license": "MIT",
   "devDependencies": {
+    "@faker-js/faker": "^9.0.2",
+    "jest": "^29.7.0",
     "mocha": "^10.0.0"
   }
 }
