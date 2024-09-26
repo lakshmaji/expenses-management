@@ -1,19 +1,5 @@
 const fs = require("fs")
 
-const filename = process.argv[2]
-
-
-
-fs.readFile(filename, "utf8", (err, data) => {
-    if (err) {
-        console.error('Error reading the file:', err);
-        return;
-    }
-
-    const inputLines = data.toString().split('\n').filter(line => line.trim() !== '');
-    processCommands(inputLines);
-})
-
 
 const createResidence = () => {
     const MAX_OCCUPANCY = 3;
@@ -293,3 +279,23 @@ function processCommands(inputLines) {
         
     });
 }
+
+function main() {
+    const filename = process.argv[2]
+
+    fs.readFile(filename, "utf8", (err, data) => {
+        if (err) {
+            console.error('Error reading the file:', err);
+            return;
+        }
+    
+        const inputLines = data.toString().split('\n').filter(line => line.trim() !== '');
+        processCommands(inputLines);
+    })
+}
+
+if (require.main === module) {
+    main();
+}
+
+module.exports = { createResidence }
