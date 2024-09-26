@@ -6,7 +6,7 @@ class Store {
             return Store.instance
         }
         this.balances = new Map();
-        Store.instance = this; 
+        Store.instance = this;
     }
 
     init(housemate) {
@@ -56,7 +56,7 @@ class Store {
     static reset() {
         Store.instance = null;
     }
-    
+
 }
 
 module.exports = Store;
