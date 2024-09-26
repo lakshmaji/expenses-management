@@ -215,6 +215,7 @@ const createResidence = () => {
         housemates: () => Array.from(balances.keys()),
         house_full: () => MAXIMUM_OCCUPANCY <= balances.size,
         occupants_count: () => balances.size,
+        reset: () => balances.clear(),
     };
 };
 
