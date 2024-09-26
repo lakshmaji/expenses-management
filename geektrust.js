@@ -3,6 +3,9 @@ const fs = require("fs")
 
 const createResidence = () => {
     const MAX_OCCUPANCY = 3;
+    const INITIAL_BALANCE = 0;
+    const MIN_MEMBERS_REQUIRED = 2;
+
     const HOUSEMATE_MESSAGES = {
         SUCCESS: 'SUCCESS',
         HOUSEFUL: 'HOUSEFUL',
@@ -19,7 +22,7 @@ const createResidence = () => {
         if (balances.size >= MAX_OCCUPANCY) {
             return HOUSEMATE_MESSAGES.HOUSEFUL;
         }
-        balances.set(name, 0);
+        balances.set(name, INITIAL_BALANCE);
         return HOUSEMATE_MESSAGES.SUCCESS;
     };
 
@@ -29,7 +32,7 @@ const createResidence = () => {
 
     const spend = (amount, spent_by, ...on_members) => {
         // How about a case when there are on_members
-        if (balances.size < 2) {
+        if (balances.size < MIN_MEMBERS_REQUIRED) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
 
@@ -47,8 +50,9 @@ const createResidence = () => {
         }
 
 
+        let total_members = on_members.length;
         // Include spender
-        const total_members = on_members.length + 1;
+        total_members++
         const individual_share = amount / total_members;
 
         for (const member of on_members) {
@@ -65,9 +69,9 @@ const createResidence = () => {
         const debtors = [];
 
         for (const [member, balance] of balances) {
-            if (balance > 0) {
+            if (balance > INITIAL_BALANCE) {
                 creditors.push({ member, amount: balance });
-            } else if (balance < 0) {
+            } else if (balance < INITIAL_BALANCE) {
                 debtors.push({ member, amount: -balance });
             }
         }
@@ -88,10 +92,10 @@ const createResidence = () => {
             creditor.amount -= amount;
             debtor.amount -= amount;
 
-            if (creditor.amount === 0) {
+            if (creditor.amount === INITIAL_BALANCE) {
                 i++;
             }
-            if (debtor.amount === 0) {
+            if (debtor.amount === INITIAL_BALANCE) {
                 j++;
             }
         }
@@ -124,7 +128,7 @@ const createResidence = () => {
         const all_housemates = new Set(Array.from(balances.keys()))
 
         const diff = excluded_housemates(all_housemates, current_housemates)
-        result = housemate_dues.concat(Array.from(diff, (e) => ({ from: e, amount: 0 })))
+        result = housemate_dues.concat(Array.from(diff, (e) => ({ from: e, amount: INITIAL_BALANCE })))
 
         result.sort((a, b) => {
             if (b.amount !== a.amount) {
@@ -157,7 +161,7 @@ const createResidence = () => {
         }
         balances.set(borrower, payerBalance - amount);
         balances.set(lender, payeeBalance + amount);
-        const due_amount = settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, 0)
+        const due_amount = settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, INITIAL_BALANCE)
         return due_amount
     }
 
@@ -169,19 +173,19 @@ const createResidence = () => {
     const canMoveOut = (member) => {
         const memberBalance = balances.get(member);
 
-        if (memberBalance > 0) {
+        if (memberBalance > INITIAL_BALANCE) {
             // Member has dues to clear.
             return false
         }
 
-        let others_totals = 0;
+        let others_totals = INITIAL_BALANCE;
         for (const [otherMember, balance] of balances) {
             if (otherMember !== member) {
                 others_totals += balance;
                 others_totals += balance;
             }
         }
-        if (others_totals === 0 && memberBalance === 0) {
+        if (others_totals === INITIAL_BALANCE && memberBalance === INITIAL_BALANCE) {
             // This member doesn't owes anyone
             return true;
         }
@@ -265,7 +269,8 @@ function main() {
     //     // If there are no args passes assuming it test environment.
     //     return;
     // }
-    const filename = process.argv[2]
+    const FILENAME_POS = 2;
+    const filename = process.argv[FILENAME_POS]
 
     fs.readFile(filename, "utf8", (err, data) => {
         if (err) {

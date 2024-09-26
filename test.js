@@ -6,7 +6,7 @@ jest.mock('fs');
 
 // TODO: move to Jest setup
 expect.extend({
-    // This will only work with objects having max depth of 1.
+    // This will only work with objects having max depth of one.
     toHaveChanged(received, fromValue, toValue) {
         const hasDifference = Object.keys(toValue).every(key => {
             return JSON.stringify(received[key]) === JSON.stringify(toValue[key]) &&
@@ -66,16 +66,7 @@ describe("House Dues Management", () => {
         }
         return Array.from(new Set(result))
     }
-
-    function getKeyByValue(value) {
-        const obj = FAKE_NAMES
-        for (const key in obj) {
-            if (obj[key] === value) {
-                return key;
-            }
-        }
-        return null;
-    }
+    const MEMBER_COUNTS = {TWO:2, THREE: 3, FOUR: 4};
 
     function findFirstMissingValue(array) {
         const valueSet = new Set(array);
@@ -91,19 +82,19 @@ describe("House Dues Management", () => {
 
             it('should have 2 housemates', () => {
                 const house = createResidence();
-                addNHousemates(house, 2)
+                addNHousemates(house, MEMBER_COUNTS.TWO)
                 expect(house.occupants_count()).toBe(2)
             });
 
             it('should have 3 housemates', () => {
                 const house = createResidence();
-                addNHousemates(house, 3)
+                addNHousemates(house, MEMBER_COUNTS.THREE)
                 expect(house.occupants_count()).toBe(3)
             });
 
             it('should have 3 housemates', () => {
                 const house = createResidence();
-                addNHousemates(house, 4)
+                addNHousemates(house, MEMBER_COUNTS.THREE)
                 expect(house.occupants_count()).toBe(3)
             });
         })
@@ -116,13 +107,13 @@ describe("House Dues Management", () => {
 
             it('should return false when there are few housemates', () => {
                 const house = createResidence();
-                addNHousemates(house, 2)
+                addNHousemates(house, MEMBER_COUNTS.TWO)
                 expect(house.house_full()).toBe(false)
             });
 
             it('should return true when house is full', () => {
                 const house = createResidence();
-                addNHousemates(house, 3)
+                addNHousemates(house, MEMBER_COUNTS.THREE)
                 expect(house.house_full()).toBe(true)
             });
         })
@@ -135,13 +126,13 @@ describe("House Dues Management", () => {
 
             it('should return housemates list when there are few housemates', () => {
                 const house = createResidence();
-                const members = addNHousemates(house, 2)
+                const members = addNHousemates(house, MEMBER_COUNTS.TWO)
                 expect(house.housemates()).toEqual(members)
             });
 
             it('should return housemates list house is full', () => {
                 const house = createResidence();
-                const members = addNHousemates(house, 3)
+                const members = addNHousemates(house, MEMBER_COUNTS.THREE)
                 expect(house.housemates()).toEqual(members)
             });
         })
@@ -306,14 +297,14 @@ describe("House Dues Management", () => {
 
         it('should welcome a new member to house when house is not full', () => {
             const house = createResidence();
-            addNHousemates(house, 2)
+            addNHousemates(house, MEMBER_COUNTS.TWO)
             const result = house.addMember(FAKE_NAMES.SUPER_RHINO)
             expect(result).toBe('SUCCESS')
         });
 
         it('should not welcome a new member to house when houseful', () => {
             const house = createResidence();
-            addNHousemates(house, 3)
+            addNHousemates(house, MEMBER_COUNTS.THREE)
             const result = house.addMember(FAKE_NAMES.SUPER_RHINO)
             expect(result).toBe('HOUSEFUL')
         });
@@ -322,28 +313,28 @@ describe("House Dues Management", () => {
     describe('SPEND', () => {
         it('should spend when added spent amount on all housemates', () => {
             const house = createResidence();
-            const members = addNHousemates(house, 3)
+            const members = addNHousemates(house, MEMBER_COUNTS.THREE)
             const result = house.spend(3000, ...members)
             expect(result).toBe('SUCCESS')
         });
 
         it('should spend when added spent amount on few housemates', () => {
             const house = createResidence();
-            const members = addNHousemates(house, 3)
+            const members = addNHousemates(house, MEMBER_COUNTS.THREE)
             const result = house.spend(3000, ...members.slice(0, 2))
             expect(result).toBe('SUCCESS')
         });
 
         it('should not spend when added spent amount on a new member', () => {
             const house = createResidence();
-            const members = addNHousemates(house, 2)
+            const members = addNHousemates(house, MEMBER_COUNTS.TWO)
             const result = house.spend(3000, ...members, findFirstMissingValue(members))
             expect(result).toBe('MEMBER_NOT_FOUND')
         });
 
         it('should not spend when added spent amount by a new member', () => {
             const house = createResidence();
-            const members = addNHousemates(house, 2)
+            const members = addNHousemates(house, MEMBER_COUNTS.TWO)
             const result = house.spend(3000, findFirstMissingValue(members), ...members,)
             expect(result).toBe('MEMBER_NOT_FOUND')
         });
@@ -413,18 +404,18 @@ describe("House Dues Management", () => {
         it('should print dues by amount in descending order', () => {
             const house = createResidence();
             house.addMember(FAKE_NAMES.SNOWBALL)
-            house.addMember(FAKE_NAMES.GRU)
             house.addMember(FAKE_NAMES.SUPER_RHINO)
-            house.spend(2000, FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL)
-            house.spend(3000, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL)
+            house.addMember(FAKE_NAMES.GRU)
+            house.spend(14000, FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL)
+            house.spend(8000, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL)
             const result = house.dues(FAKE_NAMES.SNOWBALL)
             expect(result).toEqual([{
-                amount: 1500,
-                from: FAKE_NAMES.SUPER_RHINO,
+                amount: 7000,
+                from: FAKE_NAMES.GRU,
                 to: FAKE_NAMES.SNOWBALL,
             }, {
-                amount: 1000,
-                from: FAKE_NAMES.GRU,
+                amount: 4000,
+                from: FAKE_NAMES.SUPER_RHINO,
                 to: FAKE_NAMES.SNOWBALL,
             }])
         });
@@ -530,14 +521,14 @@ describe("House Dues Management", () => {
     describe('MOVE_OUT', () => {
         it('should move out a member they do not have any spending by any members in the house', () => {
             const house = createResidence();
-            const members = addNHousemates(house, 3)
+            const members = addNHousemates(house, MEMBER_COUNTS.THREE)
             const result = house.moveOut(getOneHousemate(members))
             expect(result).toBe('SUCCESS')
         });
 
         it('should not move out when trying to move a non member of the house', () => {
             const house = createResidence();
-            const members = addNHousemates(house, 2)
+            const members = addNHousemates(house, MEMBER_COUNTS.TWO)
             const result = house.moveOut(findFirstMissingValue(members))
             expect(result).toBe('MEMBER_NOT_FOUND')
         });
