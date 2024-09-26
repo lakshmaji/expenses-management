@@ -285,6 +285,10 @@ function processCommands(inputLines) {
 }
 
 function main() {
+    // if (process.argv.length <= 2) {
+    //     // If there are no args passes assuming it test environment.
+    //     return;
+    // }
     const filename = process.argv[2]
 
     fs.readFile(filename, "utf8", (err, data) => {
@@ -298,8 +302,6 @@ function main() {
     })
 }
 
-if (require.main === module) {
-    main();
-}
+main();
 
 module.exports = { createResidence }

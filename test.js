@@ -2,6 +2,8 @@ const { faker } = require('@faker-js/faker');
 
 const { createResidence } = require('./geektrust');
 
+jest.mock('fs');
+
 // TODO: move to Jest setup
 // expect.extend({
 //     toHaveChanged(received, fromValue, toValue) {
@@ -52,9 +54,9 @@ expect.extend({
 
 
 
-describe("House Dues Management", () => {
+describe("House Dues Management", () => {   
 
-    const FAKE_NAMES = {
+        const FAKE_NAMES = {
         GRU: 'Gru',
         SNOWBALL:'Snowball',
         SUPER_RHINO: 'Super Rhino', 
