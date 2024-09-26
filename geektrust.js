@@ -171,8 +171,8 @@ const createResidence = () => {
         balances.set(borrower, payerBalance - amount);
         balances.set(lender, payeeBalance + amount);
         // return balances.get(borrower)
-const ae =  settleDebts().filter(e => e.from === borrower).reduce((acc, v) => acc +v.amount, 0)    
-const be =  settleDebts().filter(e => e.from === lender).reduce((acc, v) => acc +v.amount, 0)    
+// const ae =  settleDebts().filter(e => e.from === borrower).reduce((acc, v) => acc +v.amount, 0)    
+// const be =  settleDebts().filter(e => e.from === lender).reduce((acc, v) => acc +v.amount, 0)    
 const ce =  settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc +v.amount, 0)
 // console.log(ce, borrower, lender)    
 // // return be-ae
@@ -188,29 +188,23 @@ const ce =  settleDebts().filter(e => e.from === lender && e.to === borrower).re
     const canMoveOut = (member) => {
         const memberBalance = balances.get(member);
 
-        // Check if member has any balance due (they should be at zero)
-        if (memberBalance !== 0) {
-            // return "FAILURE: Member has dues to clear.";
+        if (memberBalance > 0) {
+            // Member has dues to clear.
             return false
         }
-        let result = true;
 
+        let others_totals = 0; 
         for (const [otherMember, balance] of balances) {
-            if (otherMember !== member && balance < 0) {
-                const owedAmount = -balance; // Other member owes this amount
-                if (balances.get(otherMember) > 0) {
-                    result  = false;
-                    break;
-
-                }
-                if (owedAmount !== 0) {
-                    // result  = false;
-                    // break;
-                }
+            if (otherMember !== member) {
+                others_totals += balance;
+                others_totals += balance;
             }
         }
-
-        return result
+        if(others_totals === 0 && memberBalance === 0) {
+            // This member doesn't owes anyone
+            return true;
+        }
+        return false;
     };
 
       
@@ -220,6 +214,7 @@ const ce =  settleDebts().filter(e => e.from === lender && e.to === borrower).re
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
         
+        // one liner balances.get(member) === 0 (which means he doesn't owe anyone also no dues)
         const result = canMoveOut(member);
         if (result) {
             balances.delete(member);
@@ -304,4 +299,4 @@ function main() {
 
 main();
 
-module.exports = { createResidence }
+module.exports = { createResidence, processCommands, main }

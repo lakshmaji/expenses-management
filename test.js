@@ -1,32 +1,12 @@
-const { faker } = require('@faker-js/faker');
 
-const { createResidence } = require('./geektrust');
+const { createResidence, processCommands, main } = require('./geektrust');
+const fs = require("fs")
 
 jest.mock('fs');
 
 // TODO: move to Jest setup
-// expect.extend({
-//     toHaveChanged(received, fromValue, toValue) {
-//         const isChanged = Object.keys(toValue).every(key => 
-//             JSON.stringify(received[key]) === JSON.stringify(toValue[key])
-//         );
-
-//         const isFromValue = Object.keys(fromValue).every(key => 
-//             JSON.stringify(received[key]) === JSON.stringify(fromValue[key])
-//         );
-
-//         const pass = isChanged && !isFromValue;
-
-//         const message = pass
-//             ? () => `expected ${JSON.stringify(received)} not to have changed from ${JSON.stringify(fromValue)} to ${JSON.stringify(toValue)}`
-//             : () => `expected ${JSON.stringify(received)} to have changed from ${JSON.stringify(fromValue)} to ${JSON.stringify(toValue)}`;
-        
-//         return { message, pass };
-//     },
-// });
-
-
 expect.extend({
+    // This will only work with objects having max depth of 1.
     toHaveChanged(received, fromValue, toValue) {
             const hasDifference = Object.keys(toValue).every(key => {
                 return JSON.stringify(received[key]) === JSON.stringify(toValue[key]) &&
@@ -64,7 +44,7 @@ describe("House Dues Management", () => {
     }
 
     function getRandomValue (arr) {
-        const randomIndex = faker.number.int({ min: 0, max: arr.length - 1 });
+        const randomIndex = Math.floor(Math.random() * arr.length);
         return arr[randomIndex];
     }
 
@@ -527,7 +507,14 @@ describe("House Dues Management", () => {
             expect(result).toBe('INCORRECT_PAYMENT')
         });
 
-        it('should not accept amount when not a member of house', () => {
+        it('should not accept amount when borrower not a member of house', () => {
+            const house = createResidence();
+            house.addMember(FAKE_NAMES.SNOWBALL)
+            const result = house.clearDue(FAKE_NAMES.SNOWBALL, FAKE_NAMES.GRU, 2000)
+            expect(result).toBe('MEMBER_NOT_FOUND')
+        });
+
+        it('should not accept amount when lender is not a member of house', () => {
             const house = createResidence();
             house.addMember(FAKE_NAMES.SNOWBALL)
             const result = house.clearDue(FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL, 2000)
@@ -595,7 +582,7 @@ describe("House Dues Management", () => {
             expect(result).toBe('FAILURE')
         });
 
-        it('should not move out when trying to move a member who owes by others', () => {
+        it('should not move out when member owed by others', () => {
             const house = createResidence();
             house.addMember(FAKE_NAMES.GRU)
             house.addMember(FAKE_NAMES.SNOWBALL)
@@ -603,5 +590,232 @@ describe("House Dues Management", () => {
             const result = house.moveOut(FAKE_NAMES.SNOWBALL)
             expect(result).toBe('FAILURE')
         });
+
+        it('should not move out when member do not have dues', () => {
+            const house = createResidence();
+            house.addMember(FAKE_NAMES.GRU)
+            house.addMember(FAKE_NAMES.SNOWBALL)
+            house.addMember(FAKE_NAMES.SUPER_RHINO)
+            house.spend(3000, FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
+            house.spend(300, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
+            house.clearDue(FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.GRU, 500)
+            house.clearDue(FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.GRU, 2500)
+            house.clearDue(FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.GRU, 650)
+            const result = house.moveOut(FAKE_NAMES.SUPER_RHINO)
+            expect(result).toBe('SUCCESS')
+        });
+
+        it('should move out a individual who doesnt owed to anyone and no dues', () => {
+            const house = createResidence();
+            house.addMember(FAKE_NAMES.GRU)
+            house.addMember(FAKE_NAMES.SNOWBALL)
+            house.addMember(FAKE_NAMES.SUPER_RHINO)
+            house.spend(3000, FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
+            house.spend(3000, FAKE_NAMES.SNOWBALL, FAKE_NAMES.GRU, FAKE_NAMES.SUPER_RHINO)
+            house.spend(2000, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL)
+            const result1 = house.moveOut(FAKE_NAMES.GRU)
+            const result2 = house.moveOut(FAKE_NAMES.SUPER_RHINO)
+            const result3 = house.moveOut(FAKE_NAMES.SNOWBALL)
+            expect(result1).toEqual('FAILURE')
+            expect(result2).toEqual('FAILURE')
+            expect(result3).toEqual('SUCCESS')
+        });
+    })
+
+    describe('processCommands', () => {
+        let consoleLogSpy;
+
+        beforeEach(() => {
+            consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+        });
+    
+        afterEach(() => {
+            consoleLogSpy.mockRestore();
+        });
+
+        it('Invalid command', () => {
+            const input = [
+                'BELLO',
+            ]
+
+            processCommands(input)
+
+
+            expect(consoleLogSpy).toHaveBeenCalledWith('Unknown command')    
+        });
+        it('Test case 1', () => {
+            const input = [
+                'MOVE_IN ANDY',
+                'MOVE_IN WOODY',
+                'MOVE_IN BO',
+                'MOVE_IN REX',
+                'SPEND 3000 ANDY WOODY BO',
+                'SPEND 300 WOODY BO',
+                'SPEND 300 WOODY REX',
+                'DUES BO',
+                'DUES WOODY',
+                'CLEAR_DUE BO ANDY 500',
+                'CLEAR_DUE BO ANDY 2500',
+                'MOVE_OUT ANDY',
+                'MOVE_OUT WOODY',
+                'MOVE_OUT BO',
+                'CLEAR_DUE BO ANDY 650',
+                'MOVE_OUT BO',
+            ]
+
+            const expected_output = [
+                'SUCCESS',
+                'SUCCESS',
+                'SUCCESS',
+                'HOUSEFUL',
+                'SUCCESS',
+                'SUCCESS',
+                'MEMBER_NOT_FOUND',
+                'ANDY 1150',
+                'WOODY 0',
+                'ANDY 850',
+                'BO 0',
+                '650',
+                'INCORRECT_PAYMENT',
+                'FAILURE',
+                'FAILURE',
+                'FAILURE',
+                '0',
+                'SUCCESS',
+            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line]: line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word: word))
+
+            processCommands(input)
+
+
+            expect(consoleLogSpy.mock.calls).toEqual(expected_output)    
+        });
+
+        it('Test case 2', () => {
+            const input = [
+                'MOVE_IN ANDY',
+                'MOVE_IN WOODY',
+                'MOVE_IN BO',
+                'SPEND 6000 WOODY ANDY BO',
+                'SPEND 6000 ANDY BO',
+                'DUES ANDY',
+                'DUES BO',
+                'CLEAR_DUE BO ANDY 1000',
+                'CLEAR_DUE BO WOODY 4000',
+                'MOVE_OUT ANDY',
+                'MOVE_OUT WOODY',
+            ]
+
+            const expected_output = [
+                'SUCCESS',
+                'SUCCESS',
+                'SUCCESS',
+                'SUCCESS',
+                'SUCCESS',
+                'BO 0',
+                'WOODY 0',
+                'WOODY 4000',
+                'ANDY 1000',
+                '0',
+                '0',
+                'SUCCESS',
+                'SUCCESS',
+            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line]: line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word: word))
+            
+            processCommands(input)
+
+
+            expect(consoleLogSpy.mock.calls).toEqual(expected_output)    
+        });
+
+        it('Test case 3', () => {
+            const input = [
+                'SPEND 1000 WOODY ANDY',
+                'DUES ANDY',
+                'MOVE_IN ANDY',
+                'SPEND 1000 ANDY REX',
+                'MOVE_OUT ANDY',
+                'CLEAR_DUE ANDY WOODY 500',
+            ]
+
+            const expected_output = [
+                'MEMBER_NOT_FOUND',
+                'MEMBER_NOT_FOUND',
+                'SUCCESS',
+                'MEMBER_NOT_FOUND',
+                'SUCCESS',
+                'MEMBER_NOT_FOUND',
+            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line]: line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word: word))
+            
+            processCommands(input)
+
+
+            expect(consoleLogSpy.mock.calls).toEqual(expected_output)    
+        });
+
+        it('Test case 4', () => {
+            const input = [
+                'MOVE_IN ANDY',
+                'MOVE_IN WOODY',
+                'MOVE_IN BO',
+                'SPEND 6000 ANDY WOODY BO',
+                'SPEND 3000 WOODY ANDY',
+                'SPEND 12000 BO ANDY WOODY',
+                'DUES ANDY',
+                'DUES WOODY',
+            ]
+
+            const expected_output = [
+                'SUCCESS',
+                'SUCCESS',
+                'SUCCESS',
+                'SUCCESS',
+                'SUCCESS',
+                'SUCCESS',
+                'BO 1500',
+                'WOODY 0',
+                'BO 4500',
+                'ANDY 0',
+            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line]: line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word: word))
+            
+            processCommands(input)
+
+
+            expect(consoleLogSpy.mock.calls).toEqual(expected_output)    
+        });
+    })
+
+    describe('main', () => {
+        let argvSpy, consoleErrorSpy;
+        
+        beforeAll(() => {
+            argvSpy = process.argv;
+            consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+        });
+    
+        afterAll(() => {
+            process.argv = argvSpy;
+            consoleErrorSpy.mockRestore();
+            jest.clearAllMocks();
+        });
+ 
+        it('should read filename', () => {
+            jest.spyOn(fs, 'readFile').mockImplementation((filename, encoding, callback) => {
+                callback(null, '');
+            });
+
+            process.argv = ['node', 'script.js', 'sample_input/input1.txt'];
+
+            main()
+            expect(fs.readFile).toHaveBeenCalledWith('sample_input/input1.txt', 'utf8', expect.any(Function));
+        })
+
+        it('should return error', () => {
+            const err = new Error('File not found')
+            fs.readFile.mockImplementation((filename, encoding, callback) => {
+                callback(err, null);
+            });
+            main()
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Error reading the file:', err);
+        })
     })
 });

@@ -22,6 +22,12 @@ node geektrust.js sample_input/input1.txt
 yarn test
 ```
 
+## Coverage report
+
+```bash
+yarn test --coverage
+```
+
 ---
 ## Pre-requisites
 * NodeJS 12.6.0/14.15.4/16.10.0
