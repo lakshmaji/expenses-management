@@ -11,6 +11,11 @@ const canMoveOut = (store, member) => {
         return false
     }
 
+    return owedBySomeone(store, member);
+};
+
+function owedBySomeone(store, member) {
+    const memberBalance = store.get(member);
     let others_totals = INITIAL_BALANCE;
     for (const [otherMember, balance] of store.get_balances()) {
         if (otherMember !== member) {
@@ -18,13 +23,9 @@ const canMoveOut = (store, member) => {
             others_totals += balance;
         }
     }
-    if (others_totals === INITIAL_BALANCE && memberBalance === INITIAL_BALANCE) {
-        // This member doesn't owes anyone
-        return true;
-    }
-    return false;
-};
-
+    // If truthy then this member doesn't owes anyone else owed by someone
+    return others_totals === INITIAL_BALANCE && memberBalance === INITIAL_BALANCE
+}
 
 const moveOut = (member) => {
     const store = new Store()

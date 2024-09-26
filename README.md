@@ -12,6 +12,14 @@ Ugly hacks due to geektrust platform limitations
 6. Ugly hacks: due to geektrust AI model incorrect evaluations .using INITIAL_BALANCE instead of number zero
 
 
+## TODO
+
+- [ ] SPR
+- [ ] Magic number test cases (follow up)
+  - [ ] 12 magic numbers
+- [ ] Duplicate blocks in test cases
+  - [ ] should have some dues when few others have spent amount
+
 Any node.js version with `fs` support is fine.
 
 ## Package manager

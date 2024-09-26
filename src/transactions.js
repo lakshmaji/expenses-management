@@ -2,9 +2,7 @@ const { INITIAL_BALANCE } = require("./constants");
 const Store = require("./store");
 
 const settleDebts = () => {
-    const store  = new Store()
-    const transactions = [];
-
+    const store = new Store()
     const creditors = [];
     const debtors = [];
 
@@ -15,6 +13,12 @@ const settleDebts = () => {
             debtors.push({ member, amount: -balance });
         }
     }
+
+    return computeTransactions(creditors, debtors);
+};
+
+function computeTransactions(creditors, debtors) {
+    const transactions = [];
 
     let i = INITIAL_BALANCE, j = INITIAL_BALANCE;
 
@@ -39,8 +43,7 @@ const settleDebts = () => {
             j++;
         }
     }
-
-    return transactions;
-};
+    return transactions
+}
 
 module.exports = { settleDebts }

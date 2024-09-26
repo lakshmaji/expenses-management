@@ -5,7 +5,6 @@ const { moveOut } = require('./move-out');
 const { spend } = require('./spend');
 const { settleDebts } = require('./transactions');
 
-
 const createResidence = (store) => {
     return {
         addMember,
