@@ -1,15 +1,15 @@
 {
-  "name": "geektrust",
+  "name": "expenses-manager",
   "version": "1.0.0",
-  "description": "geektrust-project",
-  "main": "index.js",
+  "description": "Expenses manager",
+  "main": "geektrust.js",
   "scripts": {
     "start": "node geektrust.js",
     "test": "mocha"
   },
-  "author": "geektrust",
-  "license": "ISC",
-  "dependencies": {
+  "author": "lakshmaji",
+  "license": "MIT",
+  "devDependencies": {
     "mocha": "^10.0.0"
   }
 }

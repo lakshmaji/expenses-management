@@ -1,8 +1,27 @@
-# Pre-requisites
+# Expenses management
+
+Any node.js version with `fs` support is fine.
+
+## Package manager
+
+`yarn`
+
+## Running cli
+
+```bash
+npm start sample_input/input1.txt 
+# or
+node geektrust.js sample_input/input1.txt 
+# or
+./run.sh # ubuntu
+```
+
+---
+## Pre-requisites
 * NodeJS 12.6.0/14.15.4/16.10.0
 * npm
 
-# How to run the code
+## How to run the code
 
 We have provided scripts to execute the code. 
 
@@ -19,11 +38,11 @@ We expect your program to take the location to the text file as parameter. Input
 
 This main file, main.go should receive in the command line argument and parse the file passed in. Once the file is parsed and the application processes the commands, it should only print the output.
 
- # Running the code for multiple test cases
+ ## Running the code for multiple test cases
 
  Please fill `input1.txt` and `input2.txt` with the input commands and use those files in `run.bat` or `run.sh`. Replace `./geektrust sample_input/input1.txt` with `./geektrust sample_input/input2.txt` to run the test case from the second file. 
 
- # How to execute the unit tests
+ ## How to execute the unit tests
 
  Mocha based test cases are executed with the following command from the root folder
 `mocha test`
@@ -31,7 +50,7 @@ This main file, main.go should receive in the command line argument and parse th
 Jest based test cases are executed with the following command from the root folder
 `jest`
 
-# Typescript
+## Typescript
 
 Your main file should be named as `geektrust.ts`.
 
@@ -57,7 +76,7 @@ In your `package.json` file make sure you have an entry for the install, start a
 
 Note: If you create the geektrust.js file in some other folder (like dist/, build/ or out/)other than the main folder, then please appropriately edit the start command.
 
-# Help
+## Help
 
 You can refer our help documents [here](https://help.geektrust.com)
 You can read build instructions [here](https://github.com/geektrust/coding-problem-artefacts/tree/master/NodeJS)
