@@ -4,13 +4,13 @@ const fs = require("fs")
 const createResidence = () => {
     const MAX_OCCUPANCY = 3;
     const HOUSEMATE_MESSAGES = {
-        SUCCESS :'SUCCESS',
-        HOUSEFUL :'HOUSEFUL',
+        SUCCESS: 'SUCCESS',
+        HOUSEFUL: 'HOUSEFUL',
         MEMBER_NOT_FOUND: 'MEMBER_NOT_FOUND',
     }
-    
+
     const CLEAR_DUE_MESSAGES = {
-        INVALID_PAYMENT : 'INCORRECT_PAYMENT'
+        INVALID_PAYMENT: 'INCORRECT_PAYMENT'
     }
 
     const balances = new Map();
@@ -26,7 +26,7 @@ const createResidence = () => {
     const SPEND_MESSAGES = {
         SUCCESS: 'SUCCESS'
     }
-    
+
     const spend = (amount, spent_by, ...on_members) => {
         // How about a case when there are on_members
         if (balances.size < 2) {
@@ -36,17 +36,17 @@ const createResidence = () => {
         const housemates = new Set(Array.from(balances.keys()).map(housemate => housemate.toLowerCase()));
         if (!housemates.has(spent_by.toLowerCase())) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-            
+
         }
 
         const valid_members = on_members.every(member => housemates.has(member.toLowerCase()));
 
         if (!valid_members) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-            
+
         }
-    
-    
+
+
         // Include spender
         const total_members = on_members.length + 1;
         const individual_share = amount / total_members;
@@ -101,13 +101,13 @@ const createResidence = () => {
 
     function excluded_housemates(setA, setB) {
         const difference = new Set();
-    
+
         setA.forEach(item => {
             if (!setB.has(item)) {
                 difference.add(item);
             }
         });
-    
+
         return difference;
     }
     const dues = (housemate) => {
@@ -119,23 +119,23 @@ const createResidence = () => {
         const transactions = settleDebts();
 
         const housemate_dues = transactions.filter(t => t.to === housemate)
-        
+
         const current_housemates = new Set(housemate_dues.map(h => h.from).concat(housemate))
         const all_housemates = new Set(Array.from(balances.keys()))
 
         const diff = excluded_housemates(all_housemates, current_housemates)
-        result = housemate_dues.concat(Array.from(diff, (e) => ({from: e, amount: 0})))
-        
+        result = housemate_dues.concat(Array.from(diff, (e) => ({ from: e, amount: 0 })))
+
         result.sort((a, b) => {
             if (b.amount !== a.amount) {
                 return b.amount - a.amount;
             }
             return a.from.localeCompare(b.from)
         })
-        
-    
+
+
         return result
-        
+
     }
 
     const clearDue = (borrower, lender, amount) => {
@@ -143,12 +143,12 @@ const createResidence = () => {
         const housemates = new Set(Array.from(balances.keys()).map(housemate => housemate.toLowerCase()));
         if (!housemates.has(borrower.toLowerCase())) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-    
+
         }
         if (!housemates.has(lender.toLowerCase())) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
-        
+
         // lender, amount
         // const existing_borrower_dues = DUES.get(borrower) || {}
         // if (existing_borrower_dues[lender] >= amount) {
@@ -158,7 +158,7 @@ const createResidence = () => {
         //     console.log(CLEAR_DUE_MESSAGES.INVALID_PAYMENT);
         //     return
         // }
-    
+
         // console.log(DUES.get(borrower)[lender])
 
         const payerBalance = balances.get(borrower);
@@ -171,18 +171,18 @@ const createResidence = () => {
         balances.set(borrower, payerBalance - amount);
         balances.set(lender, payeeBalance + amount);
         // return balances.get(borrower)
-// const ae =  settleDebts().filter(e => e.from === borrower).reduce((acc, v) => acc +v.amount, 0)    
-// const be =  settleDebts().filter(e => e.from === lender).reduce((acc, v) => acc +v.amount, 0)    
-const ce =  settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc +v.amount, 0)
-// console.log(ce, borrower, lender)    
-// // return be-ae
+        // const ae =  settleDebts().filter(e => e.from === borrower).reduce((acc, v) => acc +v.amount, 0)    
+        // const be =  settleDebts().filter(e => e.from === lender).reduce((acc, v) => acc +v.amount, 0)    
+        const ce = settleDebts().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, 0)
+        // console.log(ce, borrower, lender)    
+        // // return be-ae
         // return balances.get(borrower)
         return ce
-}
+    }
 
     const MOVE_OUT_MESSAGES = {
-        FAILURE :'FAILURE',
-        SUCCESS :'SUCCESS',
+        FAILURE: 'FAILURE',
+        SUCCESS: 'SUCCESS',
     }
 
     const canMoveOut = (member) => {
@@ -193,27 +193,27 @@ const ce =  settleDebts().filter(e => e.from === lender && e.to === borrower).re
             return false
         }
 
-        let others_totals = 0; 
+        let others_totals = 0;
         for (const [otherMember, balance] of balances) {
             if (otherMember !== member) {
                 others_totals += balance;
                 others_totals += balance;
             }
         }
-        if(others_totals === 0 && memberBalance === 0) {
+        if (others_totals === 0 && memberBalance === 0) {
             // This member doesn't owes anyone
             return true;
         }
         return false;
     };
 
-      
+
     const moveOut = (member) => {
         const housemates = new Set(Array.from(balances.keys()).map(housemate => housemate.toLowerCase()));
         if (!housemates.has(member.toLowerCase())) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
-        
+
         // one liner balances.get(member) === 0 (which means he doesn't owe anyone also no dues)
         const result = canMoveOut(member);
         if (result) {
@@ -233,7 +233,7 @@ const ce =  settleDebts().filter(e => e.from === lender && e.to === borrower).re
         clearDue,
         moveOut,
         housemates: () => Array.from(balances.keys()),
-        house_full:()=> MAX_OCCUPANCY <= balances.size,
+        house_full: () => MAX_OCCUPANCY <= balances.size,
         occupants_count: () => balances.size,
     };
 };
@@ -255,7 +255,7 @@ function processCommands(inputLines) {
                 console.log(respend)
                 break;
             case 'CLEAR_DUE':
-                const reclear =home.clearDue(...args);
+                const reclear = home.clearDue(...args);
                 console.log(reclear)
                 break;
             case 'DUES':
@@ -275,7 +275,7 @@ function processCommands(inputLines) {
             default:
                 console.log('Unknown command');
         }
-        
+
     });
 }
 
@@ -291,7 +291,7 @@ function main() {
             console.error('Error reading the file:', err);
             return;
         }
-    
+
         const inputLines = data.toString().split('\n').filter(line => line.trim() !== '');
         processCommands(inputLines);
     })

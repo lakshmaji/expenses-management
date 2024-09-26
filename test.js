@@ -8,25 +8,25 @@ jest.mock('fs');
 expect.extend({
     // This will only work with objects having max depth of 1.
     toHaveChanged(received, fromValue, toValue) {
-            const hasDifference = Object.keys(toValue).every(key => {
-                return JSON.stringify(received[key]) === JSON.stringify(toValue[key]) &&
-                    JSON.stringify(fromValue[key]) !== JSON.stringify(received[key]);
-            });
-    
-            const allKeysMatch = Object.keys(toValue).every(key => 
-                received.hasOwnProperty(key)
-            );
-    
-            const totalFromValue = {...fromValue, ...toValue};
-    
-            const matched_result= JSON.stringify(totalFromValue) === JSON.stringify(received)
-    
-            const pass = hasDifference && allKeysMatch && matched_result;
+        const hasDifference = Object.keys(toValue).every(key => {
+            return JSON.stringify(received[key]) === JSON.stringify(toValue[key]) &&
+                JSON.stringify(fromValue[key]) !== JSON.stringify(received[key]);
+        });
+
+        const allKeysMatch = Object.keys(toValue).every(key =>
+            received.hasOwnProperty(key)
+        );
+
+        const totalFromValue = { ...fromValue, ...toValue };
+
+        const matched_result = JSON.stringify(totalFromValue) === JSON.stringify(received)
+
+        const pass = hasDifference && allKeysMatch && matched_result;
 
         const message = pass
             ? () => `expected ${JSON.stringify(received)} not to have changed from ${JSON.stringify(fromValue)} to ${JSON.stringify(totalFromValue)}`
             : () => `expected ${JSON.stringify(received)} to have changed from ${JSON.stringify(fromValue)} to ${JSON.stringify(totalFromValue)}`;
-        
+
         return { message, pass };
     },
 });
@@ -34,28 +34,28 @@ expect.extend({
 
 
 
-describe("House Dues Management", () => {   
+describe("House Dues Management", () => {
 
-        const FAKE_NAMES = {
+    const FAKE_NAMES = {
         GRU: 'Gru',
-        SNOWBALL:'Snowball',
-        SUPER_RHINO: 'Super Rhino', 
-        WALL_E: 'Wall E', 
+        SNOWBALL: 'Snowball',
+        SUPER_RHINO: 'Super Rhino',
+        WALL_E: 'Wall E',
     }
 
-    function getRandomValue (arr) {
+    function getRandomValue(arr) {
         const randomIndex = Math.floor(Math.random() * arr.length);
         return arr[randomIndex];
     }
 
-    function getOneHousemate (arr) {
+    function getOneHousemate(arr) {
         return getRandomValue(arr);
     }
 
     function getRandomUser() {
         const arr = Object.values(FAKE_NAMES);
         return getRandomValue(arr);
-    }    
+    }
 
     const addNHousemates = (house, n) => {
         const result = []
@@ -217,9 +217,9 @@ describe("House Dues Management", () => {
                 house.spend(6000, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E)
                 house.spend(3000, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
                 house.spend(12000, FAKE_NAMES.WALL_E, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
-                
+
                 const balances = house.getBalances()
-                const total = Object.values(balances).reduce((total, balance) => total + balance, 0) 
+                const total = Object.values(balances).reduce((total, balance) => total + balance, 0)
                 expect(total).toEqual(0)
             })
 
@@ -285,8 +285,8 @@ describe("House Dues Management", () => {
                 house.spend(3000, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
                 house.spend(12000, FAKE_NAMES.WALL_E, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
                 expect(house.settleDebts()).toEqual([
-                    {from :FAKE_NAMES.WALL_E, to: FAKE_NAMES.SNOWBALL, amount: 4500},
-                    {from :FAKE_NAMES.WALL_E, to: FAKE_NAMES.SUPER_RHINO, amount: 1500},
+                    { from: FAKE_NAMES.WALL_E, to: FAKE_NAMES.SNOWBALL, amount: 4500 },
+                    { from: FAKE_NAMES.WALL_E, to: FAKE_NAMES.SUPER_RHINO, amount: 1500 },
                 ])
             })
 
@@ -298,9 +298,9 @@ describe("House Dues Management", () => {
                 house.spend(6000, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E)
                 house.spend(3000, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
                 house.spend(12000, FAKE_NAMES.WALL_E, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
-                
+
                 const balances = house.getBalances()
-                const expected_total = Object.values(balances).reduce((total, balance) => balance>0?total + balance:total, 0) 
+                const expected_total = Object.values(balances).reduce((total, balance) => balance > 0 ? total + balance : total, 0)
                 const transactions = house.settleDebts()
 
                 const actual_total = transactions.reduce((sum, transaction) => sum + transaction.amount, 0)
@@ -316,13 +316,13 @@ describe("House Dues Management", () => {
                 house.spend(6000, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E)
                 expect(house.settleDebts()).toEqual(
                     [
-                        {"amount": 1000, "from": FAKE_NAMES.SNOWBALL, "to": FAKE_NAMES.WALL_E}, 
-                        {"amount": 4000, "from": FAKE_NAMES.SUPER_RHINO, "to": FAKE_NAMES.WALL_E}]
+                        { "amount": 1000, "from": FAKE_NAMES.SNOWBALL, "to": FAKE_NAMES.WALL_E },
+                        { "amount": 4000, "from": FAKE_NAMES.SUPER_RHINO, "to": FAKE_NAMES.WALL_E }]
 
                 )
                 house.clearDue(FAKE_NAMES.WALL_E, FAKE_NAMES.SNOWBALL, 1000)
                 expect(house.settleDebts()).toEqual([
-                    {"from":FAKE_NAMES.SUPER_RHINO,"to":FAKE_NAMES.WALL_E,"amount":4000}
+                    { "from": FAKE_NAMES.SUPER_RHINO, "to": FAKE_NAMES.WALL_E, "amount": 4000 }
                 ])
             })
         })
@@ -375,11 +375,11 @@ describe("House Dues Management", () => {
         it('should not spend when added spent amount by a new member', () => {
             const house = createResidence();
             const members = addNHousemates(house, 2)
-            const result = house.spend(3000, findFirstMissingValue(members), ...members, )
+            const result = house.spend(3000, findFirstMissingValue(members), ...members,)
             expect(result).toBe('MEMBER_NOT_FOUND')
         });
     })
-    
+
     describe('DUES', () => {
         it('should not print any dues when house is empty', () => {
             const house = createResidence();
@@ -628,7 +628,7 @@ describe("House Dues Management", () => {
         beforeEach(() => {
             consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
         });
-    
+
         afterEach(() => {
             consoleLogSpy.mockRestore();
         });
@@ -641,7 +641,7 @@ describe("House Dues Management", () => {
             processCommands(input)
 
 
-            expect(consoleLogSpy).toHaveBeenCalledWith('Unknown command')    
+            expect(consoleLogSpy).toHaveBeenCalledWith('Unknown command')
         });
         it('Test case 1', () => {
             const input = [
@@ -682,12 +682,12 @@ describe("House Dues Management", () => {
                 'FAILURE',
                 '0',
                 'SUCCESS',
-            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line]: line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word: word))
+            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line] : line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word : word))
 
             processCommands(input)
 
 
-            expect(consoleLogSpy.mock.calls).toEqual(expected_output)    
+            expect(consoleLogSpy.mock.calls).toEqual(expected_output)
         });
 
         it('Test case 2', () => {
@@ -719,12 +719,12 @@ describe("House Dues Management", () => {
                 '0',
                 'SUCCESS',
                 'SUCCESS',
-            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line]: line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word: word))
-            
+            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line] : line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word : word))
+
             processCommands(input)
 
 
-            expect(consoleLogSpy.mock.calls).toEqual(expected_output)    
+            expect(consoleLogSpy.mock.calls).toEqual(expected_output)
         });
 
         it('Test case 3', () => {
@@ -744,12 +744,12 @@ describe("House Dues Management", () => {
                 'MEMBER_NOT_FOUND',
                 'SUCCESS',
                 'MEMBER_NOT_FOUND',
-            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line]: line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word: word))
-            
+            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line] : line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word : word))
+
             processCommands(input)
 
 
-            expect(consoleLogSpy.mock.calls).toEqual(expected_output)    
+            expect(consoleLogSpy.mock.calls).toEqual(expected_output)
         });
 
         it('Test case 4', () => {
@@ -775,29 +775,29 @@ describe("House Dues Management", () => {
                 'WOODY 0',
                 'BO 4500',
                 'ANDY 0',
-            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line]: line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word: word))
-            
+            ].map(line => !isNaN(line) && !isNaN(parseInt(line)) ? [+line] : line.split(' ').map(word => !isNaN(word) && !isNaN(parseInt(word)) ? +word : word))
+
             processCommands(input)
 
 
-            expect(consoleLogSpy.mock.calls).toEqual(expected_output)    
+            expect(consoleLogSpy.mock.calls).toEqual(expected_output)
         });
     })
 
     describe('main', () => {
         let argvSpy, consoleErrorSpy;
-        
+
         beforeAll(() => {
             argvSpy = process.argv;
             consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
         });
-    
+
         afterAll(() => {
             process.argv = argvSpy;
             consoleErrorSpy.mockRestore();
             jest.clearAllMocks();
         });
- 
+
         it('should read filename', () => {
             jest.spyOn(fs, 'readFile').mockImplementation((filename, encoding, callback) => {
                 callback(null, '');
