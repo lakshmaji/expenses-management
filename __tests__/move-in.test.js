@@ -2,25 +2,17 @@ const { createResidence } = require('../src/residence');
 const Store = require("../src/store");
 const { addNHousemates, TESTING_CONSTANTS, FAKE_NAMES } = require("../test.helpers");
 
-
-describe("House Dues Management", () => {
-    let store;
-    beforeEach(() => {
-        store = new Store()
-    })
-
-    afterEach(() => {
-        Store.reset()
-    })
-
+describe("House Dues Management", () => {    
     describe('MOVE_IN', () => {
         let house;
+        let store;
         beforeEach(() => {
+            store = new Store()
             house = createResidence(store);
         })
-
+        
         afterEach(() => {
-
+            Store.reset()
         })
 
         it('should welcome a new member to house when house is empty', () => {

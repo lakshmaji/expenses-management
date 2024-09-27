@@ -1,26 +1,19 @@
 const { createResidence } = require('../src/residence');
 
 const Store = require("../src/store");
-const { addNHousemates, TESTING_CONSTANTS, getOneHousemate, nonMember, FAKE_NAMES } = require('../test.helpers');
+const { addNHousemates, TESTING_CONSTANTS, getOneHousemate, nonMember, FAKE_NAMES, addMembers, spendWithRoommates, clearMemberDues } = require('../test.helpers');
 
 describe("House Dues Management", () => {
-    let store;
-    beforeEach(() => {
-        store = new Store()
-    })
-
-    afterEach(() => {
-        Store.reset()
-    })
-    
     describe('MOVE_OUT', () => {
         let house;
+        let store;
         beforeEach(() => {
+            store = new Store()
             house = createResidence(store);
         })
 
         afterEach(() => {
-
+            Store.reset()
         })
 
         it('should move out a member they do not have any spending by any members in the house', () => {
@@ -36,43 +29,43 @@ describe("House Dues Management", () => {
         });
 
         it('should not move out when trying to move a member with due', () => {
-            house.addMember(FAKE_NAMES.GRU)
-            house.addMember(FAKE_NAMES.SNOWBALL)
-            house.spend(TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SNOWBALL, FAKE_NAMES.GRU)
-            const result = house.moveOut(FAKE_NAMES.GRU)
+            addMembers(house, [FAKE_NAMES.PANDA, FAKE_NAMES.JACK])
+            spendWithRoommates(house, [[TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.JACK, FAKE_NAMES.PANDA]])
+            const result = house.moveOut(FAKE_NAMES.PANDA)
             expect(result).toBe('FAILURE')
         });
 
         it('should not move out when member owed by others', () => {
-            house.addMember(FAKE_NAMES.GRU)
-            house.addMember(FAKE_NAMES.SNOWBALL)
-            house.spend(TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SNOWBALL, FAKE_NAMES.GRU)
+            addMembers(house, [FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL])
+            spendWithRoommates(house, [[TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SNOWBALL, FAKE_NAMES.GRU]])
             const result = house.moveOut(FAKE_NAMES.SNOWBALL)
             expect(result).toBe('FAILURE')
         });
 
         it('should not move out when member do not have dues', () => {
-            house.addMember(FAKE_NAMES.GRU)
-            house.addMember(FAKE_NAMES.SNOWBALL)
-            house.addMember(FAKE_NAMES.SUPER_RHINO)
-            house.spend(TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
-            house.spend(TESTING_CONSTANTS.AMOUNTS.O, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
-            house.clearDue(FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.GRU, TESTING_CONSTANTS.AMOUNTS.K)
-            house.clearDue(FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.GRU, TESTING_CONSTANTS.AMOUNTS.I)
-            house.clearDue(FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.GRU, TESTING_CONSTANTS.AMOUNTS.J)
+            addMembers(house, [FAKE_NAMES.TURBO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO])
+            spendWithRoommates(house, [
+                [TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.TURBO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO],
+                [TESTING_CONSTANTS.AMOUNTS.O, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO]]
+            )
+            clearMemberDues(house, [
+                [FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.TURBO, TESTING_CONSTANTS.AMOUNTS.K],
+                [FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.TURBO, TESTING_CONSTANTS.AMOUNTS.I],
+                [FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.TURBO, TESTING_CONSTANTS.AMOUNTS.J]]
+            )
             const result = house.moveOut(FAKE_NAMES.SUPER_RHINO)
             expect(result).toBe('SUCCESS')
         });
 
         it('should move out a individual who doesnt owed to anyone and no dues', () => {
-            house.addMember(FAKE_NAMES.GRU)
-            house.addMember(FAKE_NAMES.SNOWBALL)
-            house.addMember(FAKE_NAMES.SUPER_RHINO)
-            house.spend(TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO)
-            house.spend(TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SNOWBALL, FAKE_NAMES.GRU, FAKE_NAMES.SUPER_RHINO)
-            house.spend(TESTING_CONSTANTS.AMOUNTS.B, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL)
-            expect(house.moveOut(FAKE_NAMES.GRU)).toEqual('FAILURE')
-            expect(house.moveOut(FAKE_NAMES.SUPER_RHINO)).toEqual('FAILURE')
+            addMembers(house, [FAKE_NAMES.FOR_THE_BIRDS, FAKE_NAMES.SNOWBALL, FAKE_NAMES.PIPER])
+            spendWithRoommates(house, [
+                [TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.FOR_THE_BIRDS, FAKE_NAMES.SNOWBALL, FAKE_NAMES.PIPER],
+                [TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SNOWBALL, FAKE_NAMES.PIPER, FAKE_NAMES.FOR_THE_BIRDS],
+                [TESTING_CONSTANTS.AMOUNTS.B, FAKE_NAMES.PIPER, FAKE_NAMES.SNOWBALL]]
+            )
+            expect(house.moveOut(FAKE_NAMES.FOR_THE_BIRDS)).toEqual('FAILURE')
+            expect(house.moveOut(FAKE_NAMES.PIPER)).toEqual('FAILURE')
             expect(house.moveOut(FAKE_NAMES.SNOWBALL)).toEqual('SUCCESS')
         });
     })

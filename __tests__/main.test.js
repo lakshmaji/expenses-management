@@ -1,51 +1,38 @@
 const fs = require("fs")
 
 const { main } = require('../geektrust');
-const Store = require("../src/store");
 
+describe('main', () => {
+    let argvSpy, consoleErrorSpy;
 
-describe("House Dues Management", () => {
-    let store;
-    beforeEach(() => {
-        store = new Store()
-    })
+    beforeAll(() => {
+        argvSpy = process.argv;
+        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    });
 
-    afterEach(() => {
-        Store.reset()
-    })
-    
-    describe('main', () => {
-        let argvSpy, consoleErrorSpy;
+    afterAll(() => {
+        process.argv = argvSpy;
+        consoleErrorSpy.mockRestore();
+        jest.clearAllMocks();
+    });
 
-        beforeAll(() => {
-            argvSpy = process.argv;
-            consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    it('should read filename', () => {
+        jest.spyOn(fs, 'readFile').mockImplementation((filename, encoding, callback) => {
+            callback(null, '');
         });
 
-        afterAll(() => {
-            process.argv = argvSpy;
-            consoleErrorSpy.mockRestore();
-            jest.clearAllMocks();
-        });
+        process.argv = ['node', 'script.js', 'sample_input/input.txt'];
 
-        it('should read filename', () => {
-            jest.spyOn(fs, 'readFile').mockImplementation((filename, encoding, callback) => {
-                callback(null, '');
-            });
-
-            process.argv = ['node', 'script.js', 'sample_input/input.txt'];
-
-            main()
-            expect(fs.readFile).toHaveBeenCalledWith('sample_input/input.txt', {}, expect.any(Function));
-        })
-
-        it('should return error', () => {
-            const err = new Error('File not found')
-            fs.readFile.mockImplementation((filename, encoding, callback) => {
-                callback(err, null);
-            });
-            main()
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Error reading the file:', err);
-        })
+        main()
+        expect(fs.readFile).toHaveBeenCalledWith('sample_input/input.txt', {}, expect.any(Function));
     })
-});
+
+    it('should return error', () => {
+        const err = new Error('File not found')
+        fs.readFile.mockImplementation((filename, encoding, callback) => {
+            callback(err, null);
+        });
+        main()
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Error reading the file:', err);
+    })
+})

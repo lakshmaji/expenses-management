@@ -5,24 +5,16 @@ const Store = require("../src/store");
 const { addNHousemates, TESTING_CONSTANTS, nonMember } = require('../test.helpers');
 
 describe("House Dues Management", () => {
-    let store;
-    beforeEach(() => {
-        store = new Store()
-    })
-
-    afterEach(() => {
-        Store.reset()
-    })
-
-
     describe('SPEND', () => {
         let house;
+        let store;
         beforeEach(() => {
+            store = new Store()
             house = createResidence(store);
         })
-
+        
         afterEach(() => {
-
+            Store.reset()
         })
 
         it('should spend when added spent amount on all housemates', () => {
@@ -43,8 +35,8 @@ describe("House Dues Management", () => {
             expect(result).toBe('MEMBER_NOT_FOUND')
         });
 
-        it('should not spend when added spent amount by a new member', () => {
-            const members = addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.TWO)
+        it('should not spend when added spent amount by a non-member', () => {
+            const members = addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.FOUR)
             const result = house.spend(TESTING_CONSTANTS.AMOUNTS.D, nonMember(members), ...members,)
             expect(result).toBe('MEMBER_NOT_FOUND')
         });

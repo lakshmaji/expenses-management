@@ -27,6 +27,16 @@ const FAKE_NAMES = {
     SNOWBALL: 'Snowball',
     SUPER_RHINO: 'Super Rhino',
     WALL_E: 'Wall E',
+    BILBY: 'Bilby',
+    MINION: 'Minion',
+    DRU: 'Dru',
+    JACK: 'Jack Jack',
+    ANGRY_BIRD: 'Angry Bird',
+    PANDA: 'Panda',
+    TANGLED: 'Tangled',
+    TURBO: 'Turbo',
+    FOR_THE_BIRDS: 'For The Birds',
+    PIPER: 'Piper',
 };
 
 
@@ -58,4 +68,27 @@ function nonMember(array) {
     return Object.values(FAKE_NAMES).find(value => !valueSet.has(value)) ?? null;
 }
 
-module.exports = {FAKE_NAMES, TESTING_CONSTANTS, nonMember, addNHousemates, getOneHousemate}
+const addMembers = (house, members) => members.forEach(member => house.addMember(member))
+
+const spendWithRoommates = (house, spends) => {
+    spends.map(spend_info => {
+        house.spend(...spend_info)
+    })
+}
+
+const clearMemberDues = (house, payments) => {
+    payments.map(payment => {
+        house.clearDue(...payment)
+    })
+}
+
+module.exports = {
+    FAKE_NAMES,
+    TESTING_CONSTANTS,
+    nonMember,
+    addNHousemates,
+    getOneHousemate,
+    addMembers,
+    spendWithRoommates,
+    clearMemberDues,
+}
