@@ -17,7 +17,7 @@ Ugly hacks due to geektrust platform limitations
 - [ ] SPR
 - [ ] Magic number test cases (follow up)
   - [ ] 12 magic numbers
-- [ ] Duplicate blocks in test cases
+- [ ] Duplicate blocks in test cases 6
   - [ ] should have some dues when few others have spent amount
 
 Any node.js version with `fs` support is fine.

@@ -3,7 +3,6 @@ const Finance = require("./finance");
 const { HOUSEMATE_MESSAGES, MOVE_OUT_MESSAGES, SPEND_MESSAGES } = require("./messages");
 const Store = require("./store");
 const StoreMeta = require("./store_meta");
-const { settleDebts } = require("./transactions");
 const { has_housemate, hasDues, owedToSomeone, valid_members } = require("./validations");
 
 class Member {
@@ -33,7 +32,7 @@ class Member {
         }
 
         const members_balances = this.store.get_balances()
-        if(owedToSomeone(name, members_balances, balance)) {
+        if (owedToSomeone(name, members_balances, balance)) {
             return MOVE_OUT_MESSAGES.FAILURE;
         }
 
@@ -60,7 +59,7 @@ class Member {
     clearDue(borrower, lender, amount) {
         if (!has_housemate(borrower)) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-    
+
         }
         if (!has_housemate(lender)) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
@@ -74,26 +73,31 @@ class Member {
         if (!has_housemate(name)) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
-    
-        const transactions = this.finances.transactions();
-    
-        const housemate_dues = transactions.filter(t => t.to === name)
-    
-        const result = housemate_dues.concat(this.getOtherMemberDues(housemate_dues, name))
-    
-        return sortDues(result)
+
+        const my_transactions = this.finances.transactions_by_member(name);
+
+        const others_zero_dues_included = my_transactions.concat(this.getOtherMemberDues(my_transactions, name))
+
+        const my_dues = sortDues(others_zero_dues_included)
+
+        if (Array.isArray(my_dues) && my_dues.length > INITIAL_BALANCE) {
+            return my_dues.map((element) => {
+                return `${element.from} ${element.amount}`;
+            });
+        }
+        return my_dues
     }
 
-    getOtherMemberDues(housemate_dues, housemate) {        
+    getOtherMemberDues(housemate_dues, housemate) {
         const current_housemates = new Set(housemate_dues.map(h => h.from).concat(housemate))
         const all_housemates = new Set(this.store_meta.housemates())
-    
+
         const diff = excluded_housemates(all_housemates, current_housemates)
         return Array.from(diff, (e) => ({ from: e, amount: INITIAL_BALANCE }))
     }
 }
 
-function sortDues(dues_list)  {
+function sortDues(dues_list) {
     dues_list.sort((a, b) => {
         if (b.amount !== a.amount) {
             return b.amount - a.amount;

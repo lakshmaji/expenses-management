@@ -82,6 +82,8 @@ const clearMemberDues = (house, payments) => {
     })
 }
 
+const isNumber = value =>  typeof Number(value) === 'number' && !isNaN(parseInt(value))
+
 module.exports = {
     FAKE_NAMES,
     TESTING_CONSTANTS,
@@ -91,4 +93,5 @@ module.exports = {
     addMembers,
     spendWithRoommates,
     clearMemberDues,
+    isNumber,
 }

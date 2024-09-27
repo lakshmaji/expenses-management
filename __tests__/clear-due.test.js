@@ -4,8 +4,6 @@ const { INITIAL_BALANCE } = require('../src/constants');
 const Store = require("../src/store");
 const { FAKE_NAMES, TESTING_CONSTANTS, addMembers, spendWithRoommates } = require('../test.helpers');
 
-
-
 describe('CLEAR_DUE', () => {
     let store;
     let house;

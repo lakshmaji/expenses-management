@@ -40,8 +40,6 @@ class Finance {
         }
     }
 
-
-
     transactions()  {
         const creditors = [];
         const debtors = [];
@@ -56,6 +54,10 @@ class Finance {
     
         return this.computeTransactions(creditors, debtors);
     };
+
+    transactions_by_member(name) {
+        return this.transactions().filter(transaction => transaction.to === name)
+    }
     
     computeTransactions(creditors, debtors) {
         const transactions = [];

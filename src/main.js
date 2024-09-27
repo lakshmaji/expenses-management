@@ -12,8 +12,7 @@ function main() {
             return;
         }
 
-        const inputLines = data.toString().split('\n').filter(line => line.trim() !== '');
-        commandParser(inputLines);
+        commandParser(data.toString());
     })
 }
 

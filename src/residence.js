@@ -1,31 +1,8 @@
-const { addMember } = require('./add-member');
-const { clearDue } = require('./clear-due');
-const { dues } = require('./dues');
 const Finance = require('./finance');
 const Member = require('./member');
-const { moveOut } = require('./move-out');
-const { spend } = require('./spend');
 const Store = require('./store');
 const StoreMeta = require('./store_meta');
-const { settleDebts } = require('./transactions');
 
-const housemates = () => {
-    const store_meta = new StoreMeta()
-    return store_meta.housemates()
-}
-const house_full = () => {
-    const store_meta = new StoreMeta()
-    return store_meta.is_full()
-}
-const occupants_count = () => {
-    const store = new StoreMeta()
-    return store.housemate_count()
-}
-
-const getBalances = () => {
-    const store = new Store()
-    return Object.fromEntries(store.get_balances())
-}
 
 class SomeHelper {
     constructor() {
@@ -83,21 +60,6 @@ class Residence extends SomeHelper {
         return this.finances.transactions()
     }
 }
-
-// const createResidence = () => {
-//     return {
-//         addMember,
-//         clearDue,
-//         dues,
-//         moveOut,
-//         spend,
-//         settleDebts,
-//         getBalances,
-//         housemates,
-//         house_full,
-//         occupants_count,
-//     };
-// };
 
 const createResidence = () => {
     const abc = new Residence()
