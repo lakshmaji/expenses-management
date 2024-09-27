@@ -1,14 +1,12 @@
-const { createResidence } = require('../src/residence');
-
-const Store = require("../src/store");
+const { createResidence } = require('../test.helpers');
+const Store = require('../src/data/store');
 const { addNHousemates, TESTING_CONSTANTS, getOneHousemate, nonMember, FAKE_NAMES, addMembers, spendWithRoommates, clearMemberDues } = require('../test.helpers');
 
 describe("House Dues Management", () => {
     describe('MOVE_OUT', () => {
         let house;
-        let store;
         beforeEach(() => {
-            store = new Store()
+            new Store()
             house = createResidence();
         })
 

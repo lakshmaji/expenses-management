@@ -1,15 +1,14 @@
-const { createResidence } = require('../src/residence');
+const { createResidence } = require('../test.helpers');
 const { INITIAL_BALANCE } = require('../src/constants');
 
-const Store = require("../src/store");
+const Store = require("../src/data/store");
 const { FAKE_NAMES, TESTING_CONSTANTS, spendWithRoommates, addMembers } = require('../test.helpers');
 
 describe("House Dues Management", () => {
     describe('DUES', () => {
-        let store;
         let house;
         beforeEach(() => {
-            store = new Store()
+            new Store()
             house = createResidence();
         })
 
@@ -40,10 +39,9 @@ describe("House Dues Management", () => {
         });
 
         it('should not have any dues when no one else have spent any amount', () => {
-            addMembers(house, [FAKE_NAMES.SNOWBALL])
-            addMembers(house, [FAKE_NAMES.TANGLED])
-            spendWithRoommates(house, [[TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SNOWBALL, FAKE_NAMES.TANGLED]])
-            const result = house.dues(FAKE_NAMES.SNOWBALL)
+            addMembers(house, [FAKE_NAMES.PUPPY, FAKE_NAMES.TANGLED])
+            spendWithRoommates(house, [[TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.PUPPY, FAKE_NAMES.TANGLED]])
+            const result = house.dues(FAKE_NAMES.PUPPY)
             expect(result).toEqual(prettyPrintDues([{ amount: INITIAL_BALANCE, from: FAKE_NAMES.TANGLED }]))
         });
 
@@ -59,9 +57,9 @@ describe("House Dues Management", () => {
         });
 
         it('should have some dues when few others have spent amount', () => {
-            addMembers(house, [FAKE_NAMES.WALL_E, FAKE_NAMES.GRU, FAKE_NAMES.SUPER_RHINO])
+            addMembers(house, [FAKE_NAMES.WALL_E, FAKE_NAMES.GRU, FAKE_NAMES.T_REX])
             spendWithRoommates(house, [
-                [TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.WALL_E],
+                [TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.T_REX, FAKE_NAMES.WALL_E],
                 [TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.GRU, FAKE_NAMES.WALL_E],
             ])
 
@@ -73,7 +71,7 @@ describe("House Dues Management", () => {
                 to: FAKE_NAMES.WALL_E,
             }, {
                 amount: TESTING_CONSTANTS.AMOUNTS.A,
-                from: FAKE_NAMES.SUPER_RHINO,
+                from: FAKE_NAMES.T_REX,
                 to: FAKE_NAMES.WALL_E,
             }]))
         });

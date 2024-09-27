@@ -1,15 +1,14 @@
 const { commandParser } = require('../src/cmd');
 
-const TEST_CASES = require('./test_data/test_data.json');
-const Store = require("../src/store");
+const TEST_CASES = require('../test_data.json');
 const { TESTING_CONSTANTS, isNumber } = require('../test.helpers');
+const Store = require('../src/data/store');
 
 describe('commandParser', () => {
-    let store;
     let consoleLogSpy;
 
     beforeEach(() => {
-        store = new Store()
+        new Store()
         consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
     });
 

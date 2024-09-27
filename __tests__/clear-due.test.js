@@ -1,14 +1,13 @@
-const { createResidence } = require('../src/residence');
+const { createResidence } = require('../test.helpers');
 const { INITIAL_BALANCE } = require('../src/constants');
 
-const Store = require("../src/store");
+const Store = require("../src/data/store");
 const { FAKE_NAMES, TESTING_CONSTANTS, addMembers, spendWithRoommates } = require('../test.helpers');
 
 describe('CLEAR_DUE', () => {
-    let store;
     let house;
     beforeEach(() => {
-        store = new Store()
+        new Store()
         house = createResidence();
     })
 
@@ -17,14 +16,14 @@ describe('CLEAR_DUE', () => {
     })
 
     it('should not pay amount when there is spend at all in house', () => {
-        addMembers(house, [FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL]);
-        const result = house.clearDue(FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL, TESTING_CONSTANTS.AMOUNTS.B)
+        addMembers(house, [FAKE_NAMES.T_REX, FAKE_NAMES.SNOWBALL]);
+        const result = house.clearDue(FAKE_NAMES.T_REX, FAKE_NAMES.SNOWBALL, TESTING_CONSTANTS.AMOUNTS.B)
         expect(result).toBe('INCORRECT_PAYMENT')
     });
 
     it('should not accept amount when borrower not a member of house', () => {
-        addMembers(house, [FAKE_NAMES.BILBY])
-        const result = house.clearDue(FAKE_NAMES.BILBY, FAKE_NAMES.MINION, TESTING_CONSTANTS.AMOUNTS.B)
+        addMembers(house, [FAKE_NAMES.SLOTH])
+        const result = house.clearDue(FAKE_NAMES.SLOTH, FAKE_NAMES.MINION, TESTING_CONSTANTS.AMOUNTS.B)
         expect(result).toBe('MEMBER_NOT_FOUND')
     });
 

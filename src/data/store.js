@@ -1,4 +1,4 @@
-const { INITIAL_BALANCE } = require("./constants");
+const { INITIAL_BALANCE } = require("../constants");
 
 class Store {
     constructor() {

@@ -1,5 +1,5 @@
-const { INITIAL_BALANCE, MAXIMUM_OCCUPANCY, MINIMUM_MEMBERS_REQUIRED } = require("./constants");
-const Store = require("./store");
+const { INITIAL_BALANCE, MAXIMUM_OCCUPANCY, MINIMUM_MEMBERS_REQUIRED } = require("../constants");
+const Store = require("../data/store");
 
 // TODO: Rename to House many be
 class StoreMeta {

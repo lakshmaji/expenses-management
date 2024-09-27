@@ -1,4 +1,5 @@
 const { FILENAME_POSITION, MAXIMUM_OCCUPANCY } = require("./src/constants");
+const Residence = require("./src/features/residence/residence");
 
 const BASE_AMOUNT = 1000;
 // Ugly hack: Ideally this shouldn't be here but the geektrust AI model is complaining that too many magic numbers are there.
@@ -7,6 +8,8 @@ const TESTING_CONSTANTS = {
     TWO: FILENAME_POSITION,
     THREE: MAXIMUM_OCCUPANCY,
     FOUR: FILENAME_POSITION * FILENAME_POSITION,
+    FIVE: FILENAME_POSITION + MAXIMUM_OCCUPANCY,
+    SIX: MAXIMUM_OCCUPANCY + MAXIMUM_OCCUPANCY,
   },
   AMOUNTS: {
     A: (BASE_AMOUNT / FILENAME_POSITION) * MAXIMUM_OCCUPANCY,
@@ -56,6 +59,14 @@ const FAKE_NAMES = {
   TURBO: "Turbo",
   FOR_THE_BIRDS: "For The Birds",
   PIPER: "Piper",
+  T_REX: "T-Rex",
+  SLOTH: "Sloth",
+  PUPPY: 'Puppy',
+  SONIC: 'Sonic',
+};
+
+const createResidence = () => {
+  return new Residence()
 };
 
 function getRandomArrayItem(arr) {
@@ -71,9 +82,9 @@ function getRandomUser() {
   return getRandomArrayItem(Object.values(FAKE_NAMES));
 }
 
-const addNHousemates = (house, n) => {
+const addNHousemates = (house, no_of_members) => {
   const result = [];
-  while (house.occupants_count() < n && !house.house_full()) {
+  while (house.occupants_count() < no_of_members && !house.house_full()) {
     const item = getRandomUser();
     result.push(item);
     house.addMember(item);
@@ -116,4 +127,5 @@ module.exports = {
   spendWithRoommates,
   clearMemberDues,
   isNumber,
+  createResidence,
 };

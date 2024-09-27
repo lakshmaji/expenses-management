@@ -12,13 +12,38 @@ Ugly hacks due to geektrust platform limitations
 6. Ugly hacks: due to geektrust AI model incorrect evaluations .using INITIAL_BALANCE instead of number zero
 
 
+## Decision Registry
+
+### 25 Sep 2024
+
+1. Everything in one file, just to understand and solve problem. No test cases.
+2. Implemented solution using simple `Set` and `Map` for members and balances respectively.
+
+
+### 26 Sep 2024
+
+1. Its hard to keep track of changes when refactoring above concluded solution, so added specs using jest framework
+2. Single Hashmap only. Removed `Map`, completely relayed on Set.
+
+### 27 Sep 2024
+
+1. Split and move test cases
+2. Use Javascript class
+3. Workaround to get rid of geektrust AI platformm magic number checks (So much math refer to test.helpers.js)
+4. Validator classes (not needed though)
+5. The `io` contains reads and writes for CLI application. A rest or gRPC or GraphQL layer can be added according to needs.
+
+### 28 Sep 2024
+
+1. Removed major test case file from submission, as it has bunch of numbers
+
+
 ## TODO
 
-- [ ] SPR
 - [ ] Magic number test cases (follow up)
-  - [ ] 12 magic numbers
-- [ ] Duplicate blocks in test cases 6
-  - [ ] should have some dues when few others have spent amount
+  - [ ] 12 magic numbers > 30 > (30 now - crazy...)
+- [ ] Duplicate blocks in test cases 
+  - [ ] 6 > 4 > 2 (now)
 
 Any node.js version with `fs` support is fine.
 

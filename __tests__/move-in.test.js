@@ -1,13 +1,12 @@
-const { createResidence } = require('../src/residence');
-const Store = require("../src/store");
+const { createResidence } = require('../test.helpers');
+const Store = require("../src/data/store");
 const { addNHousemates, TESTING_CONSTANTS, FAKE_NAMES } = require("../test.helpers");
 
 describe("House Dues Management", () => {    
     describe('MOVE_IN', () => {
         let house;
-        let store;
         beforeEach(() => {
-            store = new Store()
+            new Store()
             house = createResidence();
         })
         
@@ -16,18 +15,18 @@ describe("House Dues Management", () => {
         })
 
         it('should welcome a new member to house when house is empty', () => {
-            const result = house.addMember(FAKE_NAMES.SUPER_RHINO)
+            const result = house.addMember(FAKE_NAMES.T_REX)
             expect(result).toBe('SUCCESS')
         });
 
         it('should welcome a new member to house when house is not full', () => {
-            addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.TWO)
-            const result = house.addMember(FAKE_NAMES.SUPER_RHINO)
+            house.addMember(FAKE_NAMES.SLOTH)
+            const result = house.addMember(FAKE_NAMES.FOR_THE_BIRDS)
             expect(result).toBe('SUCCESS')
         });
 
         it('should not welcome a new member to house when houseful', () => {
-            addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.THREE)
+            addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.FIVE)
             const result = house.addMember(FAKE_NAMES.SUPER_RHINO)
             expect(result).toBe('HOUSEFUL')
         });

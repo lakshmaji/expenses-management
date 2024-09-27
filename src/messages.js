@@ -17,7 +17,6 @@ const MOVE_OUT_MESSAGES = {
     SUCCESS: 'SUCCESS',
 }
 
-
 module.exports = {
     HOUSEMATE_MESSAGES,
     SPEND_MESSAGES,

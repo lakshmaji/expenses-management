@@ -1,7 +1,8 @@
-const { INITIAL_BALANCE } = require("./constants");
-const { SPEND_MESSAGES, CLEAR_DUE_MESSAGES } = require("./messages");
-const Store = require("./store");
-const StoreMeta = require("./store_meta");
+const { INITIAL_BALANCE } = require("../../constants");
+const { SPEND_MESSAGES, CLEAR_DUE_MESSAGES } = require("../../messages");
+const Store = require("../../data/store");
+const StoreMeta = require("../store_meta");
+const computeTransactions = require("./utils");
 
 class Finance {
     constructor() {
@@ -24,8 +25,7 @@ class Finance {
     
         this.store.update(borrower, payerBalance - amount);
         this.store.update(lender, payeeBalance + amount);
-        const due_amount = this.transactions().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, INITIAL_BALANCE)
-        return due_amount
+        return this.transactions().filter(e => e.from === lender && e.to === borrower).reduce((acc, v) => acc + v.amount, INITIAL_BALANCE)
     }
 
     shareExpenses(amount, spent_by, ...on_members) {
@@ -52,42 +52,12 @@ class Finance {
             }
         }
     
-        return this.computeTransactions(creditors, debtors);
+        return computeTransactions(creditors, debtors);
     };
 
-    transactions_by_member(name) {
+    transactionsByMember(name) {
         return this.transactions().filter(transaction => transaction.to === name)
     }
-    
-    computeTransactions(creditors, debtors) {
-        const transactions = [];
-    
-        let i = INITIAL_BALANCE, j = INITIAL_BALANCE;
-    
-        while (i < creditors.length && j < debtors.length) {
-            const creditor = creditors[i];
-            const debtor = debtors[j];
-            const amount = Math.min(creditor.amount, debtor.amount);
-    
-            transactions.push({
-                from: debtor.member,
-                to: creditor.member,
-                amount
-            });
-    
-            creditor.amount -= amount;
-            debtor.amount -= amount;
-    
-            if (creditor.amount === INITIAL_BALANCE) {
-                i++;
-            }
-            if (debtor.amount === INITIAL_BALANCE) {
-                j++;
-            }
-        }
-        return transactions
-    }
-
 }
 
 module.exports = Finance

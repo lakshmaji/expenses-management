@@ -1,15 +1,16 @@
-const { createResidence } = require('../src/residence');
+const { createResidence } = require('../test.helpers');
 const { INITIAL_BALANCE, FILENAME_POSITION, MAXIMUM_OCCUPANCY } = require('../src/constants');
-
-const Store = require("../src/store");
+const Store = require("../src/data/store");
 const { FAKE_NAMES, addNHousemates, TESTING_CONSTANTS, addMembers, spendWithRoommates } = require("../test.helpers");
 
 
 
 describe('properties', () => {
-    let store;
+    let house;
+
     beforeEach(() => {
-        store = new Store()
+        new Store()
+        house = createResidence();
     })
 
     afterEach(() => {
@@ -17,43 +18,28 @@ describe('properties', () => {
     })
 
     describe('occupants_count', () => {
-        let house;
-        beforeEach(() => {
-            house = createResidence();
-        })
-
         it('should have no residents', () => {
             expect(house.occupants_count()).toBe(INITIAL_BALANCE)
         });
 
         it('should have two housemates', () => {
-            addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.TWO)
+            addMembers(house, [FAKE_NAMES.PUPPY, FAKE_NAMES.JACK])
             expect(house.occupants_count()).toBe(FILENAME_POSITION)
         });
 
         it('should have three housemates', () => {
-            addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.THREE)
-            expect(house.occupants_count()).toBe(MAXIMUM_OCCUPANCY)
-        });
-
-        it('should have three housemates', () => {
-            addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.THREE)
+            addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.FOUR)
             expect(house.occupants_count()).toBe(MAXIMUM_OCCUPANCY)
         });
     })
 
     describe('house_full', () => {
-        let house;
-        beforeEach(() => {
-            house = createResidence();
-        })
-
         it('should return false when house is empty', () => {
             expect(house.house_full()).toBe(false)
         });
 
         it('should return false when there are few housemates', () => {
-            addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.TWO)
+            addMembers(house, [FAKE_NAMES.FOR_THE_BIRDS, FAKE_NAMES.PUPPY])
             expect(house.house_full()).toBe(false)
         });
 
@@ -64,11 +50,6 @@ describe('properties', () => {
     })
 
     describe('housemates', () => {
-        let house;
-        beforeEach(() => {
-            house = createResidence();
-        })
-
         it('should empty array when house is empty', () => {
             expect(house.housemates()).toEqual([])
         });
@@ -79,17 +60,12 @@ describe('properties', () => {
         });
 
         it('should return housemates list house is full', () => {
-            const members = addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.THREE)
+            const members = addNHousemates(house, TESTING_CONSTANTS.MEMBER_COUNTS.SIX)
             expect(house.housemates()).toEqual(members)
         });
     })
 
     describe('getBalances', () => {
-        let house;
-        beforeEach(() => {
-            house = createResidence();
-        })
-
         it('should return empty balances when house is empty', () => {
             expect(house.getBalances()).toEqual({})
         })
@@ -151,17 +127,12 @@ describe('properties', () => {
     })
 
     describe('settleDebts', () => {
-        let house;
-        beforeEach(() => {
-            house = createResidence();
-        })
-
         it('should return empty transactions when house is empty', () => {
             expect(house.settleDebts()).toEqual([])
         })
 
         it('should return empty transactions when house has no spending amount at all', () => {
-            addMembers(house, [FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL])
+            addMembers(house, [FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SONIC])
             expect(house.settleDebts()).toEqual([])
         })
 
@@ -191,11 +162,11 @@ describe('properties', () => {
         })
 
         it('should have the same as sum of net balances, when sum the all transactions ', () => {
-            addMembers(house, [FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.WALL_E])
+            addMembers(house, [FAKE_NAMES.SNOWBALL, FAKE_NAMES.TURBO, FAKE_NAMES.WALL_E])
             spendWithRoommates(house, [
-                [TESTING_CONSTANTS.AMOUNTS.F, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E],
-                [TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO],
-                [TESTING_CONSTANTS.AMOUNTS.G, FAKE_NAMES.WALL_E, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO],
+                [TESTING_CONSTANTS.AMOUNTS.F, FAKE_NAMES.TURBO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E],
+                [TESTING_CONSTANTS.AMOUNTS.D, FAKE_NAMES.SNOWBALL, FAKE_NAMES.TURBO],
+                [TESTING_CONSTANTS.AMOUNTS.G, FAKE_NAMES.WALL_E, FAKE_NAMES.SNOWBALL, FAKE_NAMES.TURBO],
             ]);
             const balances = house.getBalances()
             const expected_total = Object.values(balances).reduce((total, balance) => balance > INITIAL_BALANCE ? total + balance : total, INITIAL_BALANCE)
@@ -206,18 +177,18 @@ describe('properties', () => {
         })
 
         it('should change balance when some dues are cleared', () => {
-            addMembers(house, [FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.WALL_E])
+            addMembers(house, [FAKE_NAMES.MINION, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.WALL_E])
             spendWithRoommates(house, [
-                [TESTING_CONSTANTS.AMOUNTS.F, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E],
-                [TESTING_CONSTANTS.AMOUNTS.F, FAKE_NAMES.SNOWBALL, FAKE_NAMES.WALL_E],
+                [TESTING_CONSTANTS.AMOUNTS.F, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.MINION, FAKE_NAMES.WALL_E],
+                [TESTING_CONSTANTS.AMOUNTS.F, FAKE_NAMES.MINION, FAKE_NAMES.WALL_E],
             ]);
             expect(house.settleDebts()).toEqual(
                 [
-                    { "amount": TESTING_CONSTANTS.AMOUNTS.H, "from": FAKE_NAMES.SNOWBALL, "to": FAKE_NAMES.WALL_E },
+                    { "amount": TESTING_CONSTANTS.AMOUNTS.H, "from": FAKE_NAMES.MINION, "to": FAKE_NAMES.WALL_E },
                     { "amount": TESTING_CONSTANTS.AMOUNTS.C, "from": FAKE_NAMES.SUPER_RHINO, "to": FAKE_NAMES.WALL_E }]
 
             )
-            house.clearDue(FAKE_NAMES.WALL_E, FAKE_NAMES.SNOWBALL, TESTING_CONSTANTS.AMOUNTS.H)
+            house.clearDue(FAKE_NAMES.WALL_E, FAKE_NAMES.MINION, TESTING_CONSTANTS.AMOUNTS.H)
             expect(house.settleDebts()).toEqual([
                 { "from": FAKE_NAMES.SUPER_RHINO, "to": FAKE_NAMES.WALL_E, "amount": TESTING_CONSTANTS.AMOUNTS.C }
             ])

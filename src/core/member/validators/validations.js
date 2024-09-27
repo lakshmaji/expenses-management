@@ -1,5 +1,5 @@
-const { INITIAL_BALANCE } = require("./constants");
-const StoreMeta = require("./store_meta");
+const { INITIAL_BALANCE } = require("../../../constants");
+const StoreMeta = require("../../store_meta");
 
 const has_housemate = (member) => {
     const store_meta = new StoreMeta()
