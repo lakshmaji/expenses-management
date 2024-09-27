@@ -1,4 +1,4 @@
-const { INITIAL_BALANCE, MAXIMUM_OCCUPANCY, MINIMUM_MEMBERS_REQUIRED } = require("./constants");
+const { INITIAL_BALANCE } = require("./constants");
 
 class Store {
     constructor() {
@@ -9,7 +9,7 @@ class Store {
         Store.instance = this;
     }
 
-    init(housemate) {
+    add(housemate) {
         this.balances.set(housemate, INITIAL_BALANCE)
     }
 
@@ -27,26 +27,6 @@ class Store {
 
     get_balances() {
         return this.balances
-    }
-
-    can_add() {
-        return this.balances.size >= MAXIMUM_OCCUPANCY
-    }
-
-    can_spend() {
-        return this.balances.size < MINIMUM_MEMBERS_REQUIRED
-    }
-
-    is_full() {
-        return MAXIMUM_OCCUPANCY <= this.balances.size
-    }
-
-    housemate_count() {
-        return this.balances.size;
-    }
-
-    housemates() {
-        return Array.from(this.balances.keys())
     }
 
     static reset() {

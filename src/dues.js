@@ -1,28 +1,32 @@
 const { INITIAL_BALANCE } = require("./constants");
+const Member = require("./member");
 const { HOUSEMATE_MESSAGES } = require("./messages");
 const Store = require("./store");
+const StoreMeta = require("./store_meta");
 const { settleDebts } = require("./transactions");
 const { has_housemate } = require("./validations");
 
 const dues = (housemate) => {
-    if (!has_housemate(housemate)) {
-        return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-    }
+    // if (!has_housemate(housemate)) {
+    //     return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
+    // }
 
-    const transactions = settleDebts();
+    // const transactions = settleDebts();
 
-    const housemate_dues = transactions.filter(t => t.to === housemate)
+    // const housemate_dues = transactions.filter(t => t.to === housemate)
 
-    result = housemate_dues.concat(getOtherMemberDues(housemate_dues, housemate))
+    // result = housemate_dues.concat(getOtherMemberDues(housemate_dues, housemate))
 
-    return sortDues(result)
+    // return sortDues(result)
+    const member = new Member()
+    return member.dues(housemate)
 }
 
 function getOtherMemberDues(housemate_dues, housemate) {
-    const store = new Store()
+    const store_meta = new StoreMeta()
     
     const current_housemates = new Set(housemate_dues.map(h => h.from).concat(housemate))
-    const all_housemates = new Set(store.housemates())
+    const all_housemates = new Set(store_meta.housemates())
 
     const diff = excluded_housemates(all_housemates, current_housemates)
     return Array.from(diff, (e) => ({ from: e, amount: INITIAL_BALANCE }))

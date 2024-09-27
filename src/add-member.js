@@ -1,13 +1,8 @@
-const { HOUSEMATE_MESSAGES } = require("./messages");
-const Store = require("./store");
+const Member = require("./member");
 
 const addMember = (name) => {
-    const store = new Store()
-    if (store.can_add()) {
-        return HOUSEMATE_MESSAGES.HOUSEFUL;
-    }
-    store.init(name)
-    return HOUSEMATE_MESSAGES.SUCCESS;
+    const member = new Member();
+    return member.addMember(name)
 };
 
 module.exports = { addMember }

@@ -1,4 +1,5 @@
 const { INITIAL_BALANCE } = require("./constants");
+const Member = require("./member");
 const { HOUSEMATE_MESSAGES, MOVE_OUT_MESSAGES } = require("./messages");
 const Store = require("./store");
 const { has_housemate } = require("./validations");
@@ -28,18 +29,20 @@ function owedBySomeone(store, member) {
 }
 
 const moveOut = (member) => {
-    const store = new Store()
-    if (!has_housemate(member)) {
-        return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-    }
+    // const store = new Store()
+    // if (!has_housemate(member)) {
+    //     return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
+    // }
 
-    const result = canMoveOut(store, member);
-    if (result) {
-        store.remove(member);
-        return MOVE_OUT_MESSAGES.SUCCESS;
-    } else {
-        return MOVE_OUT_MESSAGES.FAILURE;
-    }
+    // const result = canMoveOut(store, member);
+    // if (result) {
+    //     store.remove(member);
+    //     return MOVE_OUT_MESSAGES.SUCCESS;
+    // } else {
+    //     return MOVE_OUT_MESSAGES.FAILURE;
+    // }
+    const _member = new Member();
+    return _member.removeMember(member)
 }
 
 
