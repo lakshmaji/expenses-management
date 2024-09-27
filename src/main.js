@@ -1,7 +1,7 @@
 const fs = require("fs")
 
 const { FILENAME_POSITION } = require('./constants');
-const { commandParser } = require('./command-parser');
+const { commandParser } = require('./cmd');
 
 function main() {
     const filename = process.argv[FILENAME_POSITION]

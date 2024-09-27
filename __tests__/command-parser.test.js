@@ -1,4 +1,4 @@
-const { commandParser } = require('../src/command-parser');
+const { commandParser } = require('../src/cmd');
 
 const TEST_CASES = require('./test_data/test_data.json');
 const Store = require("../src/store");
