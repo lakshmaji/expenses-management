@@ -3,17 +3,17 @@ function sortDues(dues_list) {
         if (b.amount !== a.amount) {
             return b.amount - a.amount;
         }
-        return a.from.localeCompare(b.from)
-    })
-    return dues_list
+        return a.from.localeCompare(b.from);
+    });
+    return dues_list;
 }
 
 function arrayDifference(a, b) {
-    const setA = new Set(a)
-    const setB = new Set(b)
+    const setA = new Set(a);
+    const setB = new Set(b);
     const difference = new Set();
 
-    setA.forEach(item => {
+    setA.forEach((item) => {
         if (!setB.has(item)) {
             difference.add(item);
         }
@@ -22,4 +22,4 @@ function arrayDifference(a, b) {
     return Array.from(difference);
 }
 
-module.exports = { sortDues, arrayDifference }
+module.exports = { sortDues, arrayDifference };

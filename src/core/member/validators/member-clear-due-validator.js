@@ -4,13 +4,12 @@ const StoreMeta = require("../../store_meta");
 
 class MemberClearDueValidator {
     constructor() {
-        this.store_meta = new StoreMeta()
+        this.store_meta = new StoreMeta();
     }
 
     validate(borrower, lender) {
         if (!has_housemate(borrower)) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-
         }
         if (!has_housemate(lender)) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
@@ -18,4 +17,4 @@ class MemberClearDueValidator {
     }
 }
 
-module.exports = MemberClearDueValidator
+module.exports = MemberClearDueValidator;

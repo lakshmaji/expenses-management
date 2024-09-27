@@ -3,7 +3,7 @@ const StoreMeta = require("../../store_meta");
 
 class AddMemberValidator {
     constructor() {
-        this.store_meta = new StoreMeta()
+        this.store_meta = new StoreMeta();
     }
 
     validate() {
@@ -13,4 +13,4 @@ class AddMemberValidator {
     }
 }
 
-module.exports = AddMemberValidator
+module.exports = AddMemberValidator;

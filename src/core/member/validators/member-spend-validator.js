@@ -4,7 +4,7 @@ const StoreMeta = require("../../store_meta");
 
 class MemberSpendValidator {
     constructor() {
-        this.store_meta = new StoreMeta()
+        this.store_meta = new StoreMeta();
     }
 
     validate(spent_by, on_members) {
@@ -23,4 +23,4 @@ class MemberSpendValidator {
     }
 }
 
-module.exports = MemberSpendValidator
+module.exports = MemberSpendValidator;

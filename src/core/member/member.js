@@ -12,30 +12,29 @@ const transformDues = require("./transformers/dues-transformer");
 const { sortDues, arrayDifference } = require("./utils");
 
 class Member {
-
     constructor() {
-        this.store = new Store()
-        this.store_meta = new StoreMeta()
-        this.finances = new Finance()
-        this.add_member_validator = new AddMemberValidator()
-        this.remove_member_validator = new RemoveMemberValidator()
-        this.member_spend_validator = new MemberSpendValidator()
-        this.member_clear_due_validator = new MemberClearDueValidator()
+        this.store = new Store();
+        this.store_meta = new StoreMeta();
+        this.finances = new Finance();
+        this.add_member_validator = new AddMemberValidator();
+        this.remove_member_validator = new RemoveMemberValidator();
+        this.member_spend_validator = new MemberSpendValidator();
+        this.member_clear_due_validator = new MemberClearDueValidator();
     }
 
     addMember(name) {
-        const error = this.add_member_validator.validate()
+        const error = this.add_member_validator.validate();
         if (error) {
-            return error
+            return error;
         }
-        this.store.add(name)
+        this.store.add(name);
         return HOUSEMATE_MESSAGES.SUCCESS;
-    };
+    }
 
     removeMember(name) {
-        const error = this.remove_member_validator.validate(name)
+        const error = this.remove_member_validator.validate(name);
         if (error) {
-            return error
+            return error;
         }
 
         this.store.remove(name);
@@ -43,17 +42,17 @@ class Member {
     }
 
     spend(amount, spent_by, ...on_members) {
-        const error = this.member_spend_validator.validate(spent_by, on_members)
+        const error = this.member_spend_validator.validate(spent_by, on_members);
         if (error) {
-            return error
+            return error;
         }
-        return this.finances.spend(amount, spent_by, ...on_members)
+        return this.finances.spend(amount, spent_by, ...on_members);
     }
 
     clearDue(borrower, lender, amount) {
-        const error = this.member_clear_due_validator.validate(borrower, lender)
+        const error = this.member_clear_due_validator.validate(borrower, lender);
         if (error) {
-            return error
+            return error;
         }
 
         return this.finances.processPayment(borrower, lender, parseInt(amount));
@@ -65,17 +64,21 @@ class Member {
         }
 
         const my_transactions = this.finances.transactionsByMember(name);
-        const dues = this.appendEmptyDues(my_transactions, name)
-        return transformDues(sortDues(dues))
+        const dues = this.appendEmptyDues(my_transactions, name);
+        return transformDues(sortDues(dues));
     }
 
     appendEmptyDues(housemate_dues, housemate) {
-        const current_housemates = housemate_dues.map(h => h.from).concat(housemate)
-        const all_housemates = this.store_meta.housemates()
+        const current_housemates = housemate_dues
+            .map((h) => h.from)
+            .concat(housemate);
+        const all_housemates = this.store_meta.housemates();
 
-        const diff = arrayDifference(all_housemates, current_housemates)
-        return housemate_dues.concat(diff.map((e) => ({ from: e, amount: INITIAL_BALANCE })))
+        const diff = arrayDifference(all_housemates, current_housemates);
+        return housemate_dues.concat(
+            diff.map((e) => ({ from: e, amount: INITIAL_BALANCE }))
+        );
     }
 }
 
-module.exports = Member
+module.exports = Member;

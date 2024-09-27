@@ -5,8 +5,8 @@ const StoreMeta = require("../../store_meta");
 
 class RemoveMemberValidator {
     constructor() {
-        this.store_meta = new StoreMeta()
-        this.store = new Store()
+        this.store_meta = new StoreMeta();
+        this.store = new Store();
     }
 
     validate(name) {
@@ -14,16 +14,16 @@ class RemoveMemberValidator {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
 
-        const balance = this.store.get(name)
+        const balance = this.store.get(name);
         if (hasDues(balance)) {
             return MOVE_OUT_MESSAGES.FAILURE;
         }
 
-        const members_balances = this.store.get_balances()
+        const members_balances = this.store.get_balances();
         if (owedToSomeone(name, members_balances, balance)) {
             return MOVE_OUT_MESSAGES.FAILURE;
         }
     }
 }
 
-module.exports = RemoveMemberValidator
+module.exports = RemoveMemberValidator;

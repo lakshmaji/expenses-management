@@ -7,7 +7,7 @@ const transformDues = (dues) => {
             return `${element.from} ${element.amount}`;
         });
     }
-    return dues
-}
+    return dues;
+};
 
-module.exports = transformDues
+module.exports = transformDues;

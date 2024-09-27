@@ -1,31 +1,34 @@
-const { INITIAL_BALANCE, MAXIMUM_OCCUPANCY, MINIMUM_MEMBERS_REQUIRED } = require("../constants");
+const {
+    INITIAL_BALANCE,
+    MAXIMUM_OCCUPANCY,
+    MINIMUM_MEMBERS_REQUIRED,
+} = require("../constants");
 const Store = require("../data/store");
 
 // TODO: Rename to House many be
 class StoreMeta {
-
     constructor() {
-        this.store = new Store()
+        this.store = new Store();
     }
 
     get balances() {
-        return this.store.get_balances()
+        return this.store.get_balances();
     }
 
     get current_members_count() {
-        return this.balances.size
+        return this.balances.size;
     }
 
     can_add() {
-        return this.current_members_count >= MAXIMUM_OCCUPANCY
+        return this.current_members_count >= MAXIMUM_OCCUPANCY;
     }
 
     can_spend() {
-        return this.current_members_count < MINIMUM_MEMBERS_REQUIRED
+        return this.current_members_count < MINIMUM_MEMBERS_REQUIRED;
     }
 
     is_full() {
-        return MAXIMUM_OCCUPANCY <= this.current_members_count
+        return MAXIMUM_OCCUPANCY <= this.current_members_count;
     }
 
     housemate_count() {
@@ -33,7 +36,7 @@ class StoreMeta {
     }
 
     housemates() {
-        return Array.from(this.balances.keys())
+        return Array.from(this.balances.keys());
     }
 }
 

@@ -2,7 +2,8 @@ const { INITIAL_BALANCE } = require("../../constants");
 
 function computeTransactions(creditors, debtors) {
     const transactions = [];
-    let i = INITIAL_BALANCE, j = INITIAL_BALANCE;
+    let i = INITIAL_BALANCE,
+        j = INITIAL_BALANCE;
 
     while (i < creditors.length && j < debtors.length) {
         const creditor = creditors[i];
@@ -12,7 +13,7 @@ function computeTransactions(creditors, debtors) {
         transactions.push({
             from: debtor.member,
             to: creditor.member,
-            amount
+            amount,
         });
 
         creditor.amount -= amount;
@@ -25,7 +26,7 @@ function computeTransactions(creditors, debtors) {
             j++;
         }
     }
-    return transactions
+    return transactions;
 }
 
-module.exports = computeTransactions
+module.exports = computeTransactions;
