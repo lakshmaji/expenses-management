@@ -3,9 +3,28 @@ const { clearDue } = require('./clear-due');
 const { dues } = require('./dues');
 const { moveOut } = require('./move-out');
 const { spend } = require('./spend');
+const Store = require('./store');
 const { settleDebts } = require('./transactions');
 
-const createResidence = (store) => {
+const housemates = () => {
+    const store = new Store()
+    return store.housemates()
+}
+const house_full = () => {
+    const store = new Store()
+    return store.is_full()
+}
+const occupants_count = () => {
+    const store = new Store()
+    return store.housemate_count()
+}
+
+const getBalances = () => {
+    const store = new Store()
+    return Object.fromEntries(store.get_balances())
+}
+
+const createResidence = () => {
     return {
         addMember,
         clearDue,
@@ -13,10 +32,10 @@ const createResidence = (store) => {
         moveOut,
         spend,
         settleDebts,
-        getBalances: () => Object.fromEntries(store.get_balances()),
-        housemates: () => store.housemates(),
-        house_full: () => store.is_full(),
-        occupants_count: () => store.housemate_count(),
+        getBalances,
+        housemates,
+        house_full,
+        occupants_count,
     };
 };
 

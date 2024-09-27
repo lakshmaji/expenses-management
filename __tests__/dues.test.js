@@ -10,7 +10,7 @@ describe("House Dues Management", () => {
         let house;
         beforeEach(() => {
             store = new Store()
-            house = createResidence(store);
+            house = createResidence();
         })
 
         afterEach(() => {

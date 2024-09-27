@@ -19,7 +19,7 @@ describe('properties', () => {
     describe('occupants_count', () => {
         let house;
         beforeEach(() => {
-            house = createResidence(store);
+            house = createResidence();
         })
 
         it('should have no residents', () => {
@@ -45,7 +45,7 @@ describe('properties', () => {
     describe('house_full', () => {
         let house;
         beforeEach(() => {
-            house = createResidence(store);
+            house = createResidence();
         })
 
         it('should return false when house is empty', () => {
@@ -66,7 +66,7 @@ describe('properties', () => {
     describe('housemates', () => {
         let house;
         beforeEach(() => {
-            house = createResidence(store);
+            house = createResidence();
         })
 
         it('should empty array when house is empty', () => {
@@ -87,7 +87,7 @@ describe('properties', () => {
     describe('getBalances', () => {
         let house;
         beforeEach(() => {
-            house = createResidence(store);
+            house = createResidence();
         })
 
         it('should return empty balances when house is empty', () => {
@@ -153,7 +153,7 @@ describe('properties', () => {
     describe('settleDebts', () => {
         let house;
         beforeEach(() => {
-            house = createResidence(store);
+            house = createResidence();
         })
 
         it('should return empty transactions when house is empty', () => {

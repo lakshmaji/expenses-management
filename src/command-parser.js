@@ -1,5 +1,4 @@
 const { createResidence } = require("./residence");
-const Store = require('./store');
 
 function commandMatcher(residence, command, ...args) {
     const cmdMatcher = {
@@ -29,9 +28,7 @@ function processCommand(command_handler, ...args) {
 }
 
 function commandParser(inputLines) {
-    const store = new Store()
-
-    const residence = createResidence(store);
+    const residence = createResidence();
 
     inputLines.forEach((line) => {
         const [command, ...args] = line.replace(/\r+$/, "").split(" ");
