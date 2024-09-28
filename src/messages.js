@@ -1,5 +1,7 @@
+const SUCCESS = "SUCCESS"
+
 const HOUSEMATE_MESSAGES = {
-    SUCCESS: "SUCCESS",
+    SUCCESS,
     HOUSEFUL: "HOUSEFUL",
     MEMBER_NOT_FOUND: "MEMBER_NOT_FOUND",
 };
@@ -9,12 +11,12 @@ const CLEAR_DUE_MESSAGES = {
 };
 
 const SPEND_MESSAGES = {
-    SUCCESS: "SUCCESS",
+    SUCCESS,
 };
 
 const MOVE_OUT_MESSAGES = {
     FAILURE: "FAILURE",
-    SUCCESS: "SUCCESS",
+    SUCCESS,
 };
 
 module.exports = {

@@ -1,5 +1,5 @@
 const { HOUSEMATE_MESSAGES } = require("../../../messages");
-const { has_housemate, valid_members } = require("./validations");
+const { valid_members } = require("./validations");
 const StoreMeta = require("../../store_meta");
 
 class MemberSpendValidator {
@@ -13,11 +13,7 @@ class MemberSpendValidator {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
 
-        if (!has_housemate(spent_by)) {
-            return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-        }
-
-        if (!valid_members(on_members)) {
+        if (!valid_members([spent_by, ...on_members])) {
             return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
         }
     }

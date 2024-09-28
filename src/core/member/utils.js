@@ -1,7 +1,9 @@
 function sortDues(dues_list) {
     dues_list.sort((a, b) => {
-        if (b.amount !== a.amount) {
-            return b.amount - a.amount;
+        const amountA = a.amount
+        const amountB = b.amount
+        if (amountB !== amountA) {
+            return amountB - amountA;
         }
         return a.from.localeCompare(b.from);
     });

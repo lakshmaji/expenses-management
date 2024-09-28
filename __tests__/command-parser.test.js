@@ -1,6 +1,6 @@
 const { commandParser } = require("../src/cmd");
 
-const TEST_CASES = require("../test_data.json");
+const TEST_CASES = require("../test_data");
 const { TESTING_CONSTANTS, isNumber } = require("../test.helpers");
 const Store = require("../src/data/store");
 

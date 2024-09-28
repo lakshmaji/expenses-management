@@ -79,6 +79,7 @@ sudo mv sonar-scanner-4.8.0.2856-linux /opt/sonar-scanner
 export PATH=$PATH:/opt/sonar-scanner/bin
 source ~/.bashrc
 
+docker compose up
 cd /home/minions/development/apps/expense-mgmt
 
 sonar-scanner \

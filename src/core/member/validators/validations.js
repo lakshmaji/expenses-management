@@ -10,11 +10,7 @@ const has_housemate = (member) => {
 };
 
 const valid_members = (members) => {
-    const store_meta = new StoreMeta();
-    const housemates = new Set(
-        store_meta.housemates().map((housemate) => housemate.toLowerCase())
-    );
-    return members.every((member) => housemates.has(member.toLowerCase()));
+    return members.every(has_housemate);
 };
 
 const hasDues = (member_balance) => {
@@ -25,7 +21,6 @@ function owedToSomeone(member, members_balances, memberBalance) {
     let others_totals = INITIAL_BALANCE;
     for (const [otherMember, balance] of members_balances) {
         if (otherMember !== member) {
-            others_totals += balance;
             others_totals += balance;
         }
     }
