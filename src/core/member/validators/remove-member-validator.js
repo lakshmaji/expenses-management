@@ -10,10 +10,6 @@ class RemoveMemberValidator {
     }
 
     validate(name) {
-        if (!has_housemate(name)) {
-            return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
-        }
-
         const balance = this.store.get(name);
         if (hasDues(balance)) {
             return MOVE_OUT_MESSAGES.FAILURE;

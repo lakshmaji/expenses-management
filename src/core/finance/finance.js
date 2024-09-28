@@ -10,23 +10,18 @@ class Finance {
         this.store_meta = new StoreMeta();
     }
 
-    spend(amount, spent_by, ...on_members) {
-        this.shareExpenses(amount, spent_by, ...on_members);
-        return SPEND_MESSAGES.SUCCESS;
-    }
-
-    processPayment(borrower, lender, amount) {
-        const payerBalance = this.store.get(borrower);
-        const payeeBalance = this.store.get(lender);
+    processPayment(sender, receiver, amount) {
+        const payerBalance = this.store.get(sender);
+        const payeeBalance = this.store.get(receiver);
 
         if (payerBalance < amount) {
             return CLEAR_DUE_MESSAGES.INVALID_PAYMENT;
         }
 
-        this.store.update(borrower, payerBalance - amount);
-        this.store.update(lender, payeeBalance + amount);
+        this.store.update(sender, payerBalance - amount);
+        this.store.update(receiver, payeeBalance + amount);
         return this.transactions()
-            .filter((e) => e.from === lender && e.to === borrower)
+            .filter((e) => e.from === receiver && e.to === sender)
             .reduce((acc, v) => acc + v.amount, INITIAL_BALANCE);
     }
 
@@ -40,6 +35,7 @@ class Finance {
             this.store.update(spent_by, this.store.get(spent_by) - individual_share);
             this.store.update(member, this.store.get(member) + individual_share);
         }
+        return SPEND_MESSAGES.SUCCESS;
     }
 
     transactions() {

@@ -1,5 +1,4 @@
 const {
-    INITIAL_BALANCE,
     MAXIMUM_OCCUPANCY,
     MINIMUM_MEMBERS_REQUIRED,
 } = require("../constants");

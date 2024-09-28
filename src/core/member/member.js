@@ -10,6 +10,7 @@ const MemberSpendValidator = require("./validators/member-spend-validator");
 const MemberClearDueValidator = require("./validators/member-clear-due-validator");
 const transformDues = require("./transformers/dues-transformer");
 const { sortDues, arrayDifference } = require("./utils");
+const MemberValidator = require("./validators/member-validator");
 
 class Member {
     constructor() {
@@ -20,6 +21,7 @@ class Member {
         this.remove_member_validator = new RemoveMemberValidator();
         this.member_spend_validator = new MemberSpendValidator();
         this.member_clear_due_validator = new MemberClearDueValidator();
+        this.member_validator = new MemberValidator()
     }
 
     addMember(name) {
@@ -32,7 +34,12 @@ class Member {
     }
 
     removeMember(name) {
-        const error = this.remove_member_validator.validate(name);
+        let error = this.member_validator.validate(name);
+        if (error) {
+            return error;
+        }
+
+        error = this.remove_member_validator.validate(name);
         if (error) {
             return error;
         }
@@ -46,7 +53,7 @@ class Member {
         if (error) {
             return error;
         }
-        return this.finances.spend(amount, spent_by, ...on_members);
+        return this.finances.shareExpenses(amount, spent_by, ...on_members);
     }
 
     clearDue(borrower, lender, amount) {
@@ -59,8 +66,9 @@ class Member {
     }
 
     dues(name) {
-        if (!has_housemate(name)) {
-            return HOUSEMATE_MESSAGES.MEMBER_NOT_FOUND;
+        const error = this.member_validator.validate(name);
+        if (error) {
+            return error;
         }
 
         const my_transactions = this.finances.transactionsByMember(name);

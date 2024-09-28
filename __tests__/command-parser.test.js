@@ -1,7 +1,8 @@
 const { commandParser } = require("../src/cmd");
 
-const TEST_CASES = require("../test_data");
-const { TESTING_CONSTANTS, isNumber } = require("../test.helpers");
+const TEST_CASES = require("../spec_helpers/testcases");
+const helpers = require("../spec_helpers/common.utils");
+const expenses = require("../spec_helpers/expenses.utils");
 const Store = require("../src/data/store");
 
 describe("commandParser", () => {
@@ -27,20 +28,20 @@ describe("commandParser", () => {
     TEST_CASES.forEach((test_case) => {
         it(test_case.title, () => {
             const expected_output = test_case.output.map((line) => {
-                if (isNumber(line)) {
+                if (helpers.isNumber(line)) {
                     return [+line];
                 }
                 const words = line.split(" ");
-                if (words.length === TESTING_CONSTANTS.MEMBER_COUNTS.TWO) {
+                if (words.length === expenses.RESIDENCE.CAPACITY.SMALL) {
                     // Check for combination of word and number,
                     // then it will be due for some member
                     const [member, amount] = words;
-                    if (isNumber(amount) && !isNumber(member)) {
+                    if (helpers.isNumber(amount) && !helpers.isNumber(member)) {
                         return [line];
                     }
                 }
                 return words.map((word) => {
-                    if (isNumber(word)) {
+                    if (helpers.isNumber(word)) {
                         return +word;
                     }
                     return word;
