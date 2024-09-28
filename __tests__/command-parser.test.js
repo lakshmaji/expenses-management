@@ -8,7 +8,6 @@ describe("commandParser", () => {
     let consoleLogSpy;
 
     beforeEach(() => {
-        new Store();
         consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
     });
 

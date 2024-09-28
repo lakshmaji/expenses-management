@@ -17,7 +17,6 @@ describe("properties", () => {
     let house;
 
     beforeEach(() => {
-        new Store();
         house = createResidence();
     });
 

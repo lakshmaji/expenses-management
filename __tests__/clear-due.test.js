@@ -12,7 +12,6 @@ const {
 describe("CLEAR_DUE", () => {
     let house;
     beforeEach(() => {
-        new Store();
         house = createResidence();
     });
 

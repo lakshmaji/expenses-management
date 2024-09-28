@@ -13,7 +13,6 @@ describe("House Dues Management", () => {
     describe("DUES", () => {
         let house;
         beforeEach(() => {
-            new Store();
             house = createResidence();
         });
 
@@ -21,7 +20,6 @@ describe("House Dues Management", () => {
             Store.reset();
         });
 
-        // TODO: move or rename stringifyDues ?
         const prettyPrintDues = (dues) => {
             return dues.map((due) => `${due.from} ${due.amount}`);
         };

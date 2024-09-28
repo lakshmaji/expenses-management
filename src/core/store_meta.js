@@ -5,7 +5,7 @@ const {
 } = require("../constants");
 const Store = require("../data/store");
 
-// TODO: Rename to House many be
+// can be Renamed to House may be
 class StoreMeta {
     constructor() {
         this.store = new Store();

@@ -15,7 +15,6 @@ describe("House Dues Management", () => {
     describe("MOVE_OUT", () => {
         let house;
         beforeEach(() => {
-            new Store();
             house = createResidence();
         });
 
