@@ -21,9 +21,7 @@ const addNHousemates = (house, no_of_members) => {
 	return Array.from(members);
 };
 
-function nonMember(members) {
-	return MEMBERS_LIST.find((value) => !new Set(members).has(value)) ?? null;
-}
+const nonMember = (members) => MEMBERS_LIST.find((value) => !new Set(members).has(value)) ?? null;
 
 const residence = (entities, cb) => entities.forEach((entity) => cb(entity)());
 
@@ -41,8 +39,12 @@ const addMembersAndSpend = (house, ...pre_conditions) => {
 
 const isNumber = (word) => typeof Number(word) === "number" && !isNaN(parseInt(word));
 
-const computeNetBalance = (balances, { exclude_debt } = { exclude_debt: false }) => sum(Object.values(balances)
-	.filter(amount => exclude_debt ? amount > INITIAL_BALANCE : true))
+const DEFAULT_BALANCE_OPTIONS = { exclude_debt: false }
+
+const computeNetBalance = (balances, options = DEFAULT_BALANCE_OPTIONS) => sum(
+	Object.values(balances)
+		.filter(amount => options.exclude_debt ? amount > INITIAL_BALANCE : true)
+)
 
 module.exports = {
 	nonMember,
