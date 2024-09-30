@@ -7,11 +7,13 @@ const Store = require("../src/data/store");
 describe("CLEAR_DUE", () => {
     let house;
     beforeEach(() => {
+        jest.spyOn(console, "log").mockImplementation();
         house = helpers.createResidence();
     });
 
     afterEach(() => {
         Store.reset();
+        jest.spyOn(console, "log").mockRestore();
     });
 
     it("should not pay amount when there is spend at all in house", () => {
@@ -45,10 +47,11 @@ describe("CLEAR_DUE", () => {
     });
 
     it("should not accept amount when due is lower than the paying amount", () => {
-        helpers.addMembers(house, [FAKE_NAMES.DRU, FAKE_NAMES.ANGRY_BIRD]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.ANGRY_BIRD, FAKE_NAMES.DRU],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.DRU, FAKE_NAMES.ANGRY_BIRD],
+            [[expenses.cable_bill, FAKE_NAMES.ANGRY_BIRD, FAKE_NAMES.DRU]]
+        );
         const result = house.clearDue(
             FAKE_NAMES.DRU,
             FAKE_NAMES.ANGRY_BIRD,
@@ -58,10 +61,11 @@ describe("CLEAR_DUE", () => {
     });
 
     it("should not accept amount when he is the one who spent money", () => {
-        helpers.addMembers(house, [FAKE_NAMES.WALL_E, FAKE_NAMES.TANGLED]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.TANGLED, FAKE_NAMES.WALL_E],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.WALL_E, FAKE_NAMES.TANGLED],
+            [[expenses.cable_bill, FAKE_NAMES.TANGLED, FAKE_NAMES.WALL_E]]
+        );
         const result = house.clearDue(
             FAKE_NAMES.TANGLED,
             FAKE_NAMES.WALL_E,
@@ -71,10 +75,11 @@ describe("CLEAR_DUE", () => {
     });
 
     it("should accept amount when due is higher than paying amount", () => {
-        helpers.addMembers(house, [FAKE_NAMES.TURBO, FAKE_NAMES.MINION]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.MINION, FAKE_NAMES.TURBO],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.TURBO, FAKE_NAMES.MINION],
+            [[expenses.cable_bill, FAKE_NAMES.MINION, FAKE_NAMES.TURBO]]
+        );
         const result = house.clearDue(
             FAKE_NAMES.TURBO,
             FAKE_NAMES.MINION,
@@ -84,10 +89,11 @@ describe("CLEAR_DUE", () => {
     });
 
     it("should accept amount when due is equal paying amount", () => {
-        helpers.addMembers(house, [FAKE_NAMES.GRU, FAKE_NAMES.JACK]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.JACK, FAKE_NAMES.GRU],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.GRU, FAKE_NAMES.JACK],
+            [[expenses.cable_bill, FAKE_NAMES.JACK, FAKE_NAMES.GRU]]
+        );
         const result = house.clearDue(
             FAKE_NAMES.GRU,
             FAKE_NAMES.JACK,

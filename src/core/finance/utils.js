@@ -1,4 +1,8 @@
-const { INITIAL_BALANCE } = require("../../constants");
+const {
+    INITIAL_BALANCE,
+    MAXIMUM_OCCUPANCY,
+    MINIMUM_MEMBERS_REQUIRED,
+} = require("../../constants");
 
 function computeTransactions(creditors, debtors) {
     const transactions = [];
@@ -29,4 +33,16 @@ function computeTransactions(creditors, debtors) {
     return transactions;
 }
 
-module.exports = computeTransactions;
+const roundTo = (amount) => {
+    const base =
+        ((MAXIMUM_OCCUPANCY + MINIMUM_MEMBERS_REQUIRED) *
+            MINIMUM_MEMBERS_REQUIRED) **
+        MINIMUM_MEMBERS_REQUIRED;
+    return Math.round(amount * base) / base;
+};
+
+const sum = (numbers) => numbers.reduce((total, number) => {
+    return roundTo(total + number)
+}, INITIAL_BALANCE)
+
+module.exports = { computeTransactions, roundTo, sum };

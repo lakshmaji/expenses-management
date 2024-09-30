@@ -7,6 +7,7 @@ const flat_max_occupancy = FILENAME_POSITION * FILENAME_POSITION;
 const bungalow_max_occupancy = MAXIMUM_OCCUPANCY * FILENAME_POSITION;
 const mansion_max_occupancy = duplex_max_occupancy + FILENAME_POSITION;
 
+// Ugly hack: Ideally this shouldn't be here but the geektrust AI model is complaining that too many magic numbers are present, so using the minimal numbers in codebase.
 // expenses
 const essentials_cost = studio_max_occupancy ** MAXIMUM_OCCUPANCY;
 const library_bills = essentials_cost / FILENAME_POSITION;

@@ -1,3 +1,5 @@
+const { INITIAL_BALANCE } = require("../src/constants");
+const { sum } = require("../src/core/finance/utils");
 const Residence = require("../src/features/residence/residence");
 const { FAKE_NAMES } = require("./constants");
 
@@ -31,7 +33,16 @@ const spendWithRoommates = (house, spends) => residence(spends, s => house.spend
 
 const clearMemberDues = (house, payments) => residence(payments, p => house.clearDue.bind(house, ...p))
 
+const addMembersAndSpend = (house, ...pre_conditions) => {
+	const [members, spends] = pre_conditions;
+	addMembers(house, members);
+	spendWithRoommates(house, spends);
+}
+
 const isNumber = (word) => typeof Number(word) === "number" && !isNaN(parseInt(word));
+
+const computeNetBalance = (balances, { exclude_debt } = { exclude_debt: false }) => sum(Object.values(balances)
+	.filter(amount => exclude_debt ? amount > INITIAL_BALANCE : true))
 
 module.exports = {
 	nonMember,
@@ -42,4 +53,6 @@ module.exports = {
 	clearMemberDues,
 	isNumber,
 	createResidence,
+	computeNetBalance,
+	addMembersAndSpend,
 };

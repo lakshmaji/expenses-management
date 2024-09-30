@@ -6,11 +6,13 @@ const Store = require("../src/data/store");
 describe("MOVE_IN", () => {
     let house;
     beforeEach(() => {
+        jest.spyOn(console, "log").mockImplementation();
         house = helpers.createResidence();
     });
 
     afterEach(() => {
         Store.reset();
+        jest.spyOn(console, "log").mockRestore();
     });
 
     it("should welcome a new member to house when house is empty", () => {

@@ -6,11 +6,13 @@ const Store = require("../src/data/store");
 describe("SPEND", () => {
     let house;
     beforeEach(() => {
+        jest.spyOn(console, "log").mockImplementation();
         house = helpers.createResidence();
     });
 
     afterEach(() => {
         Store.reset();
+        jest.spyOn(console, "log").mockRestore();
     });
 
     it("should spend when added spent amount on all housemates", () => {

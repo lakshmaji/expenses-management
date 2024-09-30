@@ -7,11 +7,13 @@ const Store = require("../src/data/store");
 describe("DUES", () => {
     let house;
     beforeEach(() => {
+        jest.spyOn(console, "log").mockImplementation();
         house = helpers.createResidence();
     });
 
     afterEach(() => {
         Store.reset();
+        jest.spyOn(console, "log").mockRestore();
     });
 
     const prettyPrintDues = (dues) => {
@@ -36,10 +38,11 @@ describe("DUES", () => {
     });
 
     it("should not have any dues when no one else have spent any amount", () => {
-        helpers.addMembers(house, [FAKE_NAMES.PUPPY, FAKE_NAMES.TANGLED]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.PUPPY, FAKE_NAMES.TANGLED],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.PUPPY, FAKE_NAMES.TANGLED],
+            [[expenses.cable_bill, FAKE_NAMES.PUPPY, FAKE_NAMES.TANGLED]]
+        );
         const result = house.dues(FAKE_NAMES.PUPPY);
         expect(result).toEqual(
             prettyPrintDues([{ amount: INITIAL_BALANCE, from: FAKE_NAMES.TANGLED }])
@@ -47,10 +50,11 @@ describe("DUES", () => {
     });
 
     it("should have some dues when some one else have spent amount", () => {
-        helpers.addMembers(house, [FAKE_NAMES.PANDA, FAKE_NAMES.GRU]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.GRU, FAKE_NAMES.PANDA],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.PANDA, FAKE_NAMES.GRU],
+            [[expenses.cable_bill, FAKE_NAMES.GRU, FAKE_NAMES.PANDA]]
+        );
         const result = house.dues(FAKE_NAMES.PANDA);
         expect(result).toEqual(
             prettyPrintDues([
@@ -64,11 +68,14 @@ describe("DUES", () => {
     });
 
     it("should have some dues when few others have spent amount", () => {
-        helpers.addMembers(house, [FAKE_NAMES.WALL_E, FAKE_NAMES.GRU, FAKE_NAMES.T_REX]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.T_REX, FAKE_NAMES.WALL_E],
-            [expenses.cable_bill, FAKE_NAMES.GRU, FAKE_NAMES.WALL_E],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.WALL_E, FAKE_NAMES.GRU, FAKE_NAMES.T_REX],
+            [
+                [expenses.cable_bill, FAKE_NAMES.T_REX, FAKE_NAMES.WALL_E],
+                [expenses.cable_bill, FAKE_NAMES.GRU, FAKE_NAMES.WALL_E],
+            ]
+        );
 
         const result = house.dues(FAKE_NAMES.WALL_E);
 
@@ -89,19 +96,14 @@ describe("DUES", () => {
     });
 
     it("should print dues by amount in descending order", () => {
-        helpers.addMembers(house, [
-            FAKE_NAMES.SNOWBALL,
-            FAKE_NAMES.MINION,
-            FAKE_NAMES.SUPER_RHINO,
-        ]);
-        helpers.spendWithRoommates(house, [
-            [expenses.electricity_bills, FAKE_NAMES.MINION, FAKE_NAMES.SNOWBALL],
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.SNOWBALL, FAKE_NAMES.MINION, FAKE_NAMES.SUPER_RHINO],
             [
-                expenses.pet_care_bills,
-                FAKE_NAMES.SUPER_RHINO,
-                FAKE_NAMES.SNOWBALL,
-            ],
-        ]);
+                [expenses.electricity_bills, FAKE_NAMES.MINION, FAKE_NAMES.SNOWBALL],
+                [expenses.pet_care_bills, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.SNOWBALL],
+            ]
+        );
 
         const result = house.dues(FAKE_NAMES.SNOWBALL);
         expect(result).toEqual(
@@ -121,14 +123,11 @@ describe("DUES", () => {
     });
 
     it("should print no dues when there are no dues", () => {
-        helpers.addMembers(house, [
-            FAKE_NAMES.FOR_THE_BIRDS,
-            FAKE_NAMES.GRU,
-            FAKE_NAMES.SUPER_RHINO,
-        ]);
-        helpers.spendWithRoommates(house, [
-            [expenses.internet_bill, FAKE_NAMES.GRU, FAKE_NAMES.FOR_THE_BIRDS],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.FOR_THE_BIRDS, FAKE_NAMES.GRU, FAKE_NAMES.SUPER_RHINO],
+            [[expenses.internet_bill, FAKE_NAMES.GRU, FAKE_NAMES.FOR_THE_BIRDS]]
+        );
 
         const result = house.dues(FAKE_NAMES.SUPER_RHINO);
 
@@ -147,15 +146,14 @@ describe("DUES", () => {
     });
 
     it("should print dues by name in ascending order when amounts are equal", () => {
-        helpers.addMembers(house, [
-            FAKE_NAMES.DRU,
-            FAKE_NAMES.WALL_E,
-            FAKE_NAMES.SUPER_RHINO,
-        ]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.DRU],
-            [expenses.cable_bill, FAKE_NAMES.WALL_E, FAKE_NAMES.DRU],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.DRU, FAKE_NAMES.WALL_E, FAKE_NAMES.SUPER_RHINO],
+            [
+                [expenses.cable_bill, FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.DRU],
+                [expenses.cable_bill, FAKE_NAMES.WALL_E, FAKE_NAMES.DRU],
+            ]
+        );
         const result = house.dues(FAKE_NAMES.DRU);
         expect(result).toEqual(
             prettyPrintDues([

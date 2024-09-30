@@ -6,11 +6,13 @@ const Store = require("../src/data/store");
 describe("MOVE_OUT", () => {
     let house;
     beforeEach(() => {
+        jest.spyOn(console, "log").mockImplementation();
         house = helpers.createResidence();
     });
 
     afterEach(() => {
         Store.reset();
+        jest.spyOn(console, "log").mockRestore();
     });
 
     it("should move out a member they do not have any spending by any members in the house", () => {
@@ -32,42 +34,43 @@ describe("MOVE_OUT", () => {
     });
 
     it("should not move out when trying to move a member with due", () => {
-        helpers.addMembers(house, [FAKE_NAMES.PANDA, FAKE_NAMES.JACK]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.JACK, FAKE_NAMES.PANDA],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.PANDA, FAKE_NAMES.JACK],
+            [[expenses.cable_bill, FAKE_NAMES.JACK, FAKE_NAMES.PANDA]]
+        );
         const result = house.moveOut(FAKE_NAMES.PANDA);
         expect(result).toBe("FAILURE");
     });
 
     it("should not move out when member owed by others", () => {
-        helpers.addMembers(house, [FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL]);
-        helpers.spendWithRoommates(house, [
-            [expenses.cable_bill, FAKE_NAMES.SNOWBALL, FAKE_NAMES.GRU],
-        ]);
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.GRU, FAKE_NAMES.SNOWBALL],
+            [[expenses.essentials_cost, FAKE_NAMES.SNOWBALL, FAKE_NAMES.GRU]]
+        );
         const result = house.moveOut(FAKE_NAMES.SNOWBALL);
         expect(result).toBe("FAILURE");
     });
 
     it("should not move out when member do not have dues", () => {
-        helpers.addMembers(house, [
-            FAKE_NAMES.TURBO,
-            FAKE_NAMES.SNOWBALL,
-            FAKE_NAMES.SUPER_RHINO,
-        ]);
-        helpers.spendWithRoommates(house, [
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.TURBO, FAKE_NAMES.SNOWBALL, FAKE_NAMES.SUPER_RHINO],
             [
-                expenses.cable_bill,
-                FAKE_NAMES.TURBO,
-                FAKE_NAMES.SNOWBALL,
-                FAKE_NAMES.SUPER_RHINO,
-            ],
-            [
-                expenses.grocery_expenses,
-                FAKE_NAMES.SNOWBALL,
-                FAKE_NAMES.SUPER_RHINO,
-            ],
-        ]);
+                [
+                    expenses.cable_bill,
+                    FAKE_NAMES.TURBO,
+                    FAKE_NAMES.SNOWBALL,
+                    FAKE_NAMES.SUPER_RHINO,
+                ],
+                [
+                    expenses.grocery_expenses,
+                    FAKE_NAMES.SNOWBALL,
+                    FAKE_NAMES.SUPER_RHINO,
+                ],
+            ]
+        );
         helpers.clearMemberDues(house, [
             [FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.TURBO, expenses.library_bills],
             [FAKE_NAMES.SUPER_RHINO, FAKE_NAMES.TURBO, expenses.phone_bills],
@@ -78,28 +81,27 @@ describe("MOVE_OUT", () => {
     });
 
     it("should move out a individual who doesnt owed to anyone and no dues", () => {
-        helpers.addMembers(house, [
-            FAKE_NAMES.FOR_THE_BIRDS,
-            FAKE_NAMES.SNOWBALL,
-            FAKE_NAMES.PIPER,
-        ]);
-        helpers.spendWithRoommates(house, [
+        helpers.addMembersAndSpend(
+            house,
+            [FAKE_NAMES.FOR_THE_BIRDS, FAKE_NAMES.T_REX, FAKE_NAMES.PIPER],
             [
-                expenses.cable_bill,
-                FAKE_NAMES.FOR_THE_BIRDS,
-                FAKE_NAMES.SNOWBALL,
-                FAKE_NAMES.PIPER,
-            ],
-            [
-                expenses.cable_bill,
-                FAKE_NAMES.SNOWBALL,
-                FAKE_NAMES.PIPER,
-                FAKE_NAMES.FOR_THE_BIRDS,
-            ],
-            [expenses.internet_bill, FAKE_NAMES.PIPER, FAKE_NAMES.SNOWBALL],
-        ]);
+                [
+                    expenses.cable_bill,
+                    FAKE_NAMES.FOR_THE_BIRDS,
+                    FAKE_NAMES.T_REX,
+                    FAKE_NAMES.PIPER,
+                ],
+                [
+                    expenses.cable_bill,
+                    FAKE_NAMES.T_REX,
+                    FAKE_NAMES.PIPER,
+                    FAKE_NAMES.FOR_THE_BIRDS,
+                ],
+                [expenses.internet_bill, FAKE_NAMES.PIPER, FAKE_NAMES.T_REX],
+            ]
+        );
         expect(house.moveOut(FAKE_NAMES.FOR_THE_BIRDS)).toEqual("FAILURE");
         expect(house.moveOut(FAKE_NAMES.PIPER)).toEqual("FAILURE");
-        expect(house.moveOut(FAKE_NAMES.SNOWBALL)).toEqual("SUCCESS");
+        expect(house.moveOut(FAKE_NAMES.T_REX)).toEqual("SUCCESS");
     });
 });
