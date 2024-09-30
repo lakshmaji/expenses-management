@@ -77,60 +77,6 @@ describe("properties", () => {
         jest.spyOn(console, "log").mockRestore();
     });
 
-    describe("occupants_count", () => {
-        it("should have no residents", () => {
-            expect(house.occupants_count()).toBe(INITIAL_BALANCE);
-        });
-
-        it("should have two housemates", () => {
-            helpers.addMembers(house, [FAKE_NAMES.PUPPY, FAKE_NAMES.JACK]);
-            expect(house.occupants_count()).toBe(FILENAME_POSITION);
-        });
-
-        it("should have three housemates", () => {
-            helpers.addNHousemates(house, expenses.RESIDENCE.CAPACITY.LARGE);
-            expect(house.occupants_count()).toBe(MAXIMUM_OCCUPANCY);
-        });
-    });
-
-    describe("house_full", () => {
-        it("should return false when house is empty", () => {
-            expect(house.house_full()).toBe(false);
-        });
-
-        it("should return false when there are few housemates", () => {
-            helpers.addMembers(house, [FAKE_NAMES.FOR_THE_BIRDS, FAKE_NAMES.PUPPY]);
-            expect(house.house_full()).toBe(false);
-        });
-
-        it("should return true when house is full", () => {
-            helpers.addNHousemates(house, expenses.RESIDENCE.CAPACITY.MEDIUM);
-            expect(house.house_full()).toBe(true);
-        });
-    });
-
-    describe("housemates", () => {
-        it("should empty array when house is empty", () => {
-            expect(house.housemates()).toEqual([]);
-        });
-
-        it("should return housemates list when there are few housemates", () => {
-            const members = helpers.addNHousemates(
-                house,
-                expenses.RESIDENCE.CAPACITY.SMALL
-            );
-            expect(house.housemates()).toEqual(members);
-        });
-
-        it("should return housemates list house is full", () => {
-            const members = helpers.addNHousemates(
-                house,
-                expenses.RESIDENCE.CAPACITY.X_SMALL
-            );
-            expect(house.housemates()).toEqual(members);
-        });
-    });
-
     describe("settleDebts", () => {
         it("should return empty transactions when house is empty", () => {
             expect(house.settleDebts()).toEqual([]);

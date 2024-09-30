@@ -6,7 +6,7 @@ describe("main", () => {
     const err = new Error("File not found");
 
     beforeAll(() => {
-        jest.spyOn(console, "log").mockImplementation();
+        // jest.spyOn(console, "log").mockImplementation();
         argvSpy = process.argv;
         consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 
@@ -24,7 +24,7 @@ describe("main", () => {
         process.argv = argvSpy;
         consoleErrorSpy.mockRestore();
         jest.clearAllMocks();
-        jest.spyOn(console, "log").mockRestore();
+        // jest.spyOn(console, "log").mockRestore();
     });
 
     it("should read filename", () => {
