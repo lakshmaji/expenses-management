@@ -1,0 +1,45 @@
+name: Integration & E2E tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '16'
+  
+    - name: Install
+      run: npm install
+  
+    - name: Run tests
+      run: npm test
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '16'
+
+    # - name: Run E2E
+    #   run: node ./.github/scripts/e2e.js
+    - name: Run E2E
+      run: |
+        bash ./.github/scripts/e2e.sh
