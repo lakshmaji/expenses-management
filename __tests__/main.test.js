@@ -1,38 +1,46 @@
-const fs = require("fs")
+const fs = require("fs");
+const { main } = require("../geektrust");
 
-const { main } = require('../geektrust');
-
-describe('main', () => {
+describe("main", () => {
     let argvSpy, consoleErrorSpy;
+    const err = new Error("File not found");
 
     beforeAll(() => {
+        // jest.spyOn(console, "log").mockImplementation();
         argvSpy = process.argv;
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+        consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+
+        process.argv = ["node", "script.js", "sample_input/input.txt"];
+        fs.readFile
+            .mockImplementationOnce((filename, encoding, callback) => {
+                callback(null, "");
+            })
+            .mockImplementation((filename, encoding, callback) => {
+                callback(err, null);
+            });
     });
 
     afterAll(() => {
         process.argv = argvSpy;
         consoleErrorSpy.mockRestore();
         jest.clearAllMocks();
+        // jest.spyOn(console, "log").mockRestore();
     });
 
-    it('should read filename', () => {
-        jest.spyOn(fs, 'readFile').mockImplementation((filename, encoding, callback) => {
-            callback(null, '');
-        });
+    it("should read filename", () => {
+        main();
+        expect(fs.readFile).toHaveBeenCalledWith(
+            "sample_input/input.txt",
+            {},
+            expect.any(Function)
+        );
+    });
 
-        process.argv = ['node', 'script.js', 'sample_input/input.txt'];
-
-        main()
-        expect(fs.readFile).toHaveBeenCalledWith('sample_input/input.txt', {}, expect.any(Function));
-    })
-
-    it('should return error', () => {
-        const err = new Error('File not found')
-        fs.readFile.mockImplementation((filename, encoding, callback) => {
-            callback(err, null);
-        });
-        main()
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Error reading the file:', err);
-    })
-})
+    it("should return error", () => {
+        main();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            "Error reading the file:",
+            err
+        );
+    });
+});

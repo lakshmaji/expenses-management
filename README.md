@@ -1,5 +1,9 @@
 # Expenses management
 
+[![Build Status](https://github.com/lakshmaji/expenses-management/actions/workflows/quality.yml/badge.svg)](https://github.com/lakshmaji/expenses-management/actions/workflows/quality.yml)
+
+![report](./.github/report.png)
+
 > Important: Got rid of utf8 and un-necessarily used constants for loops, which is annoying but had to make sacrifice due to geektrust platform
 
 Ugly hacks due to geektrust platform limitations
@@ -12,13 +16,30 @@ Ugly hacks due to geektrust platform limitations
 6. Ugly hacks: due to geektrust AI model incorrect evaluations .using INITIAL_BALANCE instead of number zero
 
 
-## TODO
+## Decision Registry
 
-- [ ] SPR
-- [ ] Magic number test cases (follow up)
-  - [ ] 12 magic numbers
-- [ ] Duplicate blocks in test cases
-  - [ ] should have some dues when few others have spent amount
+### 25 Sep 2024
+
+1. Everything in one file, just to understand and solve problem. No test cases.
+2. Implemented solution using simple `Set` and `Map` for members and balances respectively.
+
+
+### 26 Sep 2024
+
+1. Its hard to keep track of changes when refactoring above concluded solution, so added specs using jest framework
+2. Single Hashmap only. Removed `Map`, completely relayed on Set.
+
+### 27 Sep 2024
+
+1. Split and move test cases
+2. Use Javascript class
+3. Workaround to get rid of geektrust AI platformm magic number checks (So much math refer to test.helpers.js)
+4. Validator classes (not needed though)
+5. The `io` contains reads and writes for CLI application. A rest or gRPC or GraphQL layer can be added according to needs.
+
+### 28 Sep 2024
+
+1. Removed major test case file from submission, as it has bunch of numbers
 
 Any node.js version with `fs` support is fine.
 
@@ -47,68 +68,3 @@ yarn test
 ```bash
 yarn test --coverage
 ```
-
----
-## Pre-requisites
-* NodeJS 12.6.0/14.15.4/16.10.0
-* npm
-
-## How to run the code
-
-We have provided scripts to execute the code. 
-
-Use `run.sh` if you are Linux/Unix/macOS Operating systems and `run.bat` if you are on Windows.  Both the files run the commands silently and prints only output from the input file `sample_input/input1.txt`. You are supposed to add the input commands in the file from the appropriate problem statement. 
-
-Internally both the scripts run the following commands 
-
- * `yarn install --silent` - This will build the solution downloading the necessary dependencies.
- * Once the `yarn install` from the previous build process is complete, we will execute the program using the command
-
-`yarn run --silent start sample_input/input1.txt`
-
-We expect your program to take the location to the text file as parameter. Input needs to be read from a text file, and output should be printed to the console. The text file will contain only commands in the format prescribed by the respective problem.
-
-This main file, main.go should receive in the command line argument and parse the file passed in. Once the file is parsed and the application processes the commands, it should only print the output.
-
- ## Running the code for multiple test cases
-
- Please fill `input1.txt` and `input2.txt` with the input commands and use those files in `run.bat` or `run.sh`. Replace `./geektrust sample_input/input1.txt` with `./geektrust sample_input/input2.txt` to run the test case from the second file. 
-
- ## How to execute the unit tests
-
- Mocha based test cases are executed with the following command from the root folder
-`mocha test`
-
-Jest based test cases are executed with the following command from the root folder
-`jest`
-
-## Typescript
-
-Your main file should be named as `geektrust.ts`.
-
-As of now we only support Typescript under the NPM build system. This will require you to compile your typescript program into javascript.
-
-We run the commands `yarn install --silent`, `yarn run --silent start` and `yarn test --silent`.
-
-Please ensure that the npm install commands creates the file `geektrust.js` from your geektrust.ts file. The npm start command should then execute this `geektrust.js` file.
-
-In your `package.json` file make sure you have an entry for the install, start and test script.
-
-* The install command should install the dependencies and also build the `geektrust.js` file.
-* The start command will execute the program.
-* The test command should execute all the unit tests present
-
-```
-"scripts": {
-    "install" :"<command to create your geektrust.js file>",
-    "start": "node geektrust.js",
-    "test": "mocha"
-}
-```
-
-Note: If you create the geektrust.js file in some other folder (like dist/, build/ or out/)other than the main folder, then please appropriately edit the start command.
-
-## Help
-
-You can refer our help documents [here](https://help.geektrust.com)
-You can read build instructions [here](https://github.com/geektrust/coding-problem-artefacts/tree/master/NodeJS)

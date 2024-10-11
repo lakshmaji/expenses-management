@@ -1,5 +1,5 @@
-const { main } = require('./src/main');
+const { main } = require("./src/io/input-processor");
 
 main();
 
-module.exports = { main }
+module.exports = { main };
